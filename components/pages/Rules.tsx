@@ -267,11 +267,25 @@ export const Rules = () => {
   }, [profile])
 
   if (isSessionLoading) {
-    return <div>Checking Auth Session...</div>
+    return (
+      <div className="flex items-center justify-center w-full min-h-[60vh]">
+        <div className="relative">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500"></div>
+          <div className="animate-ping absolute inset-0 rounded-full h-16 w-16 border-4 border-pink-500 opacity-20"></div>
+        </div>
+      </div>
+    )
   }
 
   if (isInitialLoad) {
-    return <div>Loading Rules and User Progress...</div>
+    return (
+      <div className="flex items-center justify-center w-full min-h-[60vh]">
+        <div className="relative">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500"></div>
+          <div className="animate-ping absolute inset-0 rounded-full h-16 w-16 border-4 border-pink-500 opacity-20"></div>
+        </div>
+      </div>
+    )
   }
 
   const isLoyaltyProgramConfigured = rules?.length > 0
@@ -295,38 +309,54 @@ export const Rules = () => {
   }
 
   return (
-    <div className="flex flex-col gap-4 w-full items-start justify-start">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="flex flex-col gap-4 flex-1 items-start justify-start">
-          <Header as="h1">All Rules</Header>
-          <Code data={rules} />
+    <div className="flex flex-col gap-8 w-full items-start justify-start max-w-7xl mx-auto p-4 sm:p-8">
+      {/* Hero Header */}
+      <div className="w-full text-center space-y-4 py-8">
+        <div className="inline-block">
+          <h1 className="text-6xl sm:text-7xl font-black bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent animate-gradient">
+            Quest Rules
+          </h1>
+          <div className="h-2 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 rounded-full mt-2 animate-pulse"></div>
         </div>
-        <div className="flex flex-col gap-4 flex-1 items-start justify-start">
-          <Header as="h1">Multipliers of User</Header>
-          <Code data={multipliers} />
-        </div>
+        <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto">
+          Complete quests, earn rewards, and unlock amazing multipliers
+        </p>
       </div>
-      <hr className="border-accent" />
-      <div className="flex justify-between w-full">
-        <Header as="h3">List of rules</Header>
 
-        {!!multipliers?.length && (
-          <div>
-            <Header as="h3">
-              Total Multipler of user: {calcUserTotalMultiplier()}
-            </Header>
-            <a
-              className="text-sm text-gray-500 underline"
-              target="_blank"
-              href="https://docs.snagsolutions.io/loyalty/multipliers"
-            >
-              Docs here for how this number is calculated
-            </a>
+      {/* Multiplier Stats Card */}
+      {!!multipliers?.length && (
+        <div className="w-full bg-gradient-to-br from-indigo-500/20 to-purple-600/20 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-indigo-500/30 shadow-2xl">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="text-5xl">{'⚡'}</div>
+              <div>
+                <h3 className="text-2xl font-bold text-transparent bg-gradient-to-r from-yellow-300 to-orange-500 bg-clip-text">
+                  Your Total Multiplier
+                </h3>
+                <p className="text-sm text-gray-400">Boost your rewards</p>
+              </div>
+            </div>
+            <div className="text-5xl font-black text-transparent bg-gradient-to-r from-yellow-300 to-orange-500 bg-clip-text">
+              {calcUserTotalMultiplier()}x
+            </div>
           </div>
-        )}
-      </div>
-      <div className="flex flex-col gap-4 w-full items-start justify-center">
-        {rules.map((rule, ruleIndex) => {
+          <a
+            className="text-sm text-indigo-400 hover:text-indigo-300 underline mt-4 inline-block transition-colors"
+            target="_blank"
+            href="https://docs.snagsolutions.io/loyalty/multipliers"
+          >
+            {'📚'} Learn how multipliers work
+          </a>
+        </div>
+      )}
+
+      {/* Rules Grid */}
+      <div className="w-full">
+        <h2 className="text-4xl font-bold mb-8 text-transparent bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text flex items-center gap-3">
+          <span className="text-3xl">{'🎯'}</span> Active Quests
+        </h2>
+        <div className="grid grid-cols-1 gap-6">
+          {rules.map((rule, ruleIndex) => {
           const transaction = latestRuleTransactions[rule.id]
           const progress = rulesInProgress[rule.id]
           const processingStatus = processingRules[rule.id]
@@ -345,110 +375,159 @@ export const Rules = () => {
           return (
             <div
               key={rule?.id}
-              className="flex flex-row gap-2 items-center justify-between bg-accent p-4 rounded-xl w-full"
+              className="group relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl overflow-hidden border border-gray-700/50 hover:border-purple-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20 hover:scale-[1.02]"
             >
-              <div className="flex flex-row gap-4 items-center justify-center">
+              {/* Completed Badge */}
+              {completedAt && (
+                <div className="absolute top-4 right-4 z-10 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg flex items-center gap-2">
+                  <span>{'\u2713'}</span> Completed
+                </div>
+              )}
+
+              <div className="flex flex-col lg:flex-row gap-6 p-6">
+                {/* Rule Image */}
                 {rule?.mediaUrl && (
-                  <img
-                    src={rule?.mediaUrl}
-                    alt={rule?.name ?? ''}
-                    className="rounded max-w-sm max-h-sm object-contain"
-                  />
+                  <div className="flex-shrink-0 w-full lg:w-48 h-48 relative overflow-hidden rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 group-hover:scale-105 transition-transform duration-300">
+                    <img
+                      src={rule?.mediaUrl}
+                      alt={rule?.name ?? ''}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  </div>
                 )}
-                <div className="flex flex-col gap-2">
-                  <Header as="h5">{rule?.name}</Header>
-                  <Header className="break-all" as="p">
-                    {rule?.description}
-                  </Header>
-                  Rule Id: {rule.id}
-                  {completedAt && (
-                    <div
-                      title={JSON.stringify(transaction, null, 2)}
-                      className={`relative`}
-                    >
-                      <div className="text-sm text-green-500">
-                        Completed at {new Date(completedAt).toLocaleString()}
-                        <br />
-                        {!!transaction
-                          ? `Last Reward Amount: ${transaction.amount}`
-                          : !!loyaltyMultiplier
-                            ? `Rewarded Multiplier: ${loyaltyMultiplier.multiplier}`
-                            : ''}
+
+                {/* Rule Content */}
+                <div className="flex-1 flex flex-col gap-4">
+                  <div>
+                    <h3 className="text-2xl font-bold mb-2 text-transparent bg-gradient-to-r from-white to-gray-300 bg-clip-text">
+                      {rule?.name}
+                    </h3>
+                    <p className="text-gray-400 leading-relaxed">
+                      {rule?.description}
+                    </p>
+                  </div>
+
+                  {/* Status Indicators */}
+                  <div className="flex flex-wrap gap-3">
+                    {completedAt && (
+                      <div className="px-4 py-2 rounded-lg bg-green-500/20 border border-green-500/30 backdrop-blur-sm">
+                        <div className="text-sm text-green-400 font-semibold">
+                          {'\ud83c\udf89'} Completed: {new Date(completedAt).toLocaleDateString()}
+                        </div>
+                        {!!transaction && (
+                          <div className="text-xs text-green-300 mt-1">
+                            Reward: {transaction.amount} points
+                          </div>
+                        )}
+                        {!!loyaltyMultiplier && (
+                          <div className="text-xs text-yellow-300 mt-1">
+                            {'\u26a1'} Multiplier: {loyaltyMultiplier.multiplier}x
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  )}
-                  {processingStatus && (
-                    <div
-                      className={`text-sm ${processingStatus.status === 'pending'
-                        ? 'text-yellow-500'
-                        : processingStatus.status === 'completed'
-                          ? 'text-green-500'
-                          : 'text-red-500'
-                        }`}
+                    )}
+
+                    {processingStatus && (
+                      <div className={`px-4 py-2 rounded-lg backdrop-blur-sm ${
+                        processingStatus.status === 'pending'
+                          ? 'bg-yellow-500/20 border border-yellow-500/30'
+                          : processingStatus.status === 'completed'
+                          ? 'bg-green-500/20 border border-green-500/30'
+                          : 'bg-red-500/20 border border-red-500/30'
+                      }`}>
+                        <div className={`text-sm font-semibold ${
+                          processingStatus.status === 'pending'
+                            ? 'text-yellow-400'
+                            : processingStatus.status === 'completed'
+                            ? 'text-green-400'
+                            : 'text-red-400'
+                        }`}>
+                          {processingStatus.status === 'pending' && <>{'\u23f3'} Processing...</>}
+                          {processingStatus.status === 'completed' && <>{'\u2713'} Complete</>}
+                          {processingStatus.status === 'failed' && <>{'\u2717'} Failed</>}
+                        </div>
+                        {processingStatus.message && (
+                          <div className="text-xs text-gray-400 mt-1">
+                            {processingStatus.message}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {!!progress && (
+                      <div className="px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 backdrop-blur-sm">
+                        <div className="text-sm text-blue-400 font-semibold">
+                          {'\ud83d\udcca'} Progress: {progress.progress}%
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Time Information */}
+                  <div className="flex flex-wrap gap-3 text-sm">
+                    {rule.startTime && (
+                      <div className="text-gray-500">
+                        {'\ud83d\udd50'} Started: {new Date(rule.startTime).toLocaleDateString()}
+                      </div>
+                    )}
+                    {rule.endTime && (
+                      <div className="text-red-400 font-semibold animate-pulse">
+                        {'\u23f0'} Expires: {new Date(rule.endTime).toLocaleDateString()}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-col gap-3 justify-center items-end min-w-fit">
+                  {!!ruleMetadata?.cta?.href && (
+                    <a
+                      href={ruleMetadata?.cta?.href}
+                      target="_blank"
+                      className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2 whitespace-nowrap"
                     >
-                      Processing Status: {processingStatus.status}
-                      <br />
-                      {processingStatus.message &&
-                        `Processing Message: ${processingStatus.message}`}
-                    </div>
+                      {ruleMetadata?.cta?.label ?? 'Learn More'} {'\u2192'}
+                    </a>
                   )}
-                  {!!progress && (
-                    <div className="text-sm text-gray-500">
-                      {progress.progress}%
-                    </div>
-                  )}
-                  {rule.startTime && (
-                    <div className="text-sm text-gray-500">
-                      Started at {new Date(rule.startTime).toLocaleString()}
-                    </div>
-                  )}
-                  {rule.endTime && (
-                    <div className="text-sm text-red-500">
-                      Expires at {new Date(rule.endTime).toLocaleString()}
-                    </div>
+
+                  {!!profile?.[0] && (
+                    <LoyaltyRuleAction
+                      user={profile?.[0]}
+                      rule={rule}
+                      latestTransaction={transaction}
+                      loyaltyMultiplier={loyaltyMultiplier}
+                      processingStatus={processingStatus}
+                      onClaim={({ message }) => {
+                        alert(message)
+                        checkProcessingStatus()
+                      }}
+                    />
                   )}
                 </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                {!!ruleMetadata?.cta?.href && (
-                  <a
-                    href={ruleMetadata?.cta?.href}
-                    target="_blank"
-                    className="text-sm text-blue-500 underline"
-                  >
-                    {ruleMetadata?.cta?.label ?? ruleMetadata?.cta.href}
-                  </a>
-                )}
-
-                {!!profile?.[0] && (
-                  <LoyaltyRuleAction
-                    user={profile?.[0]}
-                    rule={rule}
-                    latestTransaction={transaction}
-                    loyaltyMultiplier={loyaltyMultiplier}
-                    processingStatus={processingStatus}
-                    onClaim={({ message }) => {
-                      alert(message)
-                      checkProcessingStatus()
-                    }}
-                  />
-                )}
               </div>
             </div>
           )
         })}
         {hasMore && (
-          <div className="w-full flex justify-center mt-4">
-            <Button
+          <div className="w-full flex justify-center mt-8">
+            <button
               onClick={() => loadRules(lastId || undefined)}
               disabled={isLoading}
-              className="w-full max-w-xs"
+              className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white rounded-2xl font-bold shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
-              {isLoading ? 'Loading...' : 'Load More'}
-            </Button>
+              {isLoading ? (
+                <span className="flex items-center gap-3">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  Loading...
+                </span>
+              ) : (
+                'Load More Quests'
+              )}
+            </button>
           </div>
         )}
+        </div>
       </div>
     </div>
   )

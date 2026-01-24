@@ -236,25 +236,46 @@ export const Minting = () => {
   }
 
   return (
-    <div className="flex flex-col gap-8 w-full items-start justify-start">
-      <Header as="h1">Minting</Header>
-      <Code data={contracts} />
-      <Header as="h4">Minting Contracts</Header>
+    <div className="flex flex-col gap-8 w-full items-start justify-start max-w-7xl mx-auto p-4 sm:p-8">
+      {/* Hero Section */}
+      <div className="w-full text-center space-y-4 py-8">
+        <div className="inline-block">
+          <h1 className="text-6xl sm:text-7xl font-black bg-gradient-to-r from-green-400 via-cyan-500 to-blue-600 bg-clip-text text-transparent animate-gradient">
+            NFT Minting
+          </h1>
+          <div className="h-2 bg-gradient-to-r from-green-400 via-cyan-500 to-blue-600 rounded-full mt-2 animate-pulse"></div>
+        </div>
+        <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto">
+          Mint exclusive NFTs from our curated collections
+        </p>
+      </div>
+
       {isLoading ? (
-        <div className="flex items-center justify-center w-full">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="flex items-center justify-center w-full min-h-[400px]">
+          <div className="relative">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-500"></div>
+            <div className="animate-ping absolute inset-0 rounded-full h-16 w-16 border-4 border-cyan-500 opacity-20"></div>
+          </div>
         </div>
       ) : contracts.length === 0 ? (
-        <Header as="p">No minting contracts found.</Header>
+        <div className="w-full flex items-center justify-center min-h-[400px]">
+          <div className="text-center space-y-4 bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-3xl p-12 border border-gray-700/50">
+            <div className="text-6xl">{'🎨'}</div>
+            <h3 className="text-2xl font-bold text-white">No Contracts Available</h3>
+            <p className="text-gray-400 max-w-md">
+              There are currently no minting contracts available. Check back soon!
+            </p>
+          </div>
+        </div>
       ) : (
-        <div className="flex flex-col gap-4 w-full items-start justify-start">
+        <div className="flex flex-col gap-6 w-full">
           {contracts.map((contract) => {
             const assets = assetsByContract[contract.id] || []
             const isAssetsLoading = assetsLoadingByContract[contract.id]
             return (
               <details
                 key={contract.id}
-                className="w-full rounded-xl border border-accent"
+                className="group w-full rounded-2xl border border-gray-700/50 bg-gradient-to-br from-gray-800/30 to-gray-900/30 backdrop-blur-xl overflow-hidden hover:border-cyan-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-cyan-500/20"
                 onToggle={(event) =>
                   handleToggle(
                     contract.id,
@@ -262,99 +283,101 @@ export const Minting = () => {
                   )
                 }
               >
-                <summary className="flex w-full items-center justify-between gap-4 cursor-pointer list-none rounded-xl bg-accent p-4">
-                  <div className="flex flex-col gap-1">
-                    <Header as="h5">{contract.name}</Header>
-                    <Header as="p" className="text-sm text-gray-500">
-                      {contract.network} • {contract.address}
-                    </Header>
+                <summary className="flex w-full items-center justify-between gap-4 cursor-pointer list-none bg-gradient-to-r from-gray-800/50 to-gray-900/50 hover:from-cyan-500/10 hover:to-blue-500/10 p-6 transition-all duration-300">
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-2xl font-bold text-transparent bg-gradient-to-r from-white to-gray-300 bg-clip-text">{contract.name}</h3>
+                    <p className="text-sm text-gray-400 font-mono">
+                      {contract.network} • {contract.address.slice(0, 10)}...{contract.address.slice(-8)}
+                    </p>
                   </div>
-                  <div className="flex flex-col items-end">
-                    <Header as="p">
-                      {contract._count.mintingContractAssets} assets
-                    </Header>
-                    <Header as="p" className="text-sm text-gray-500">
-                      {contract.tokenType === 'erc721' || contract.tokenType === 'erc721c'
-                        ? '721'
-                        : contract.tokenType === 'erc1155'
-                          ? '1155'
-                          : contract.tokenType}{' '}
-                      • {contract.network} •{' '}
-                      {contract.isListed ? 'Listed' : 'Unlisted'}
-                    </Header>
+                  <div className="flex flex-col items-end gap-1">
+                    <div className="px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30">
+                      <span className="text-cyan-400 font-bold">{contract._count.mintingContractAssets}</span>
+                      <span className="text-gray-400 ml-1">assets</span>
+                    </div>
+                    <div className="flex gap-2 text-xs text-gray-500">
+                      <span className="px-2 py-1 bg-gray-700/50 rounded">
+                        {contract.tokenType === 'erc721' || contract.tokenType === 'erc721c' ? 'ERC-721' : contract.tokenType === 'erc1155' ? 'ERC-1155' : contract.tokenType}
+                      </span>
+                      <span className={`px-2 py-1 rounded ${contract.isListed ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                        {contract.isListed ? 'Listed' : 'Unlisted'}
+                      </span>
+                    </div>
                   </div>
                 </summary>
-                <div className="flex flex-col gap-4 p-4 pt-0">
+                <div className="p-6 pt-0">
                   {isWebsiteLoading ? (
-                    <Header as="p">Loading website context...</Header>
+                    <div className="flex items-center justify-center py-8 text-gray-400">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-cyan-500 mr-3"></div>
+                      Loading website context...
+                    </div>
                   ) : !website?.id ? (
-                    <Header as="p">
+                    <div className="text-center py-8 text-gray-400">
                       Website ID is required to load minting assets.
-                    </Header>
+                    </div>
                   ) : isAssetsLoading ? (
-                    <div className="flex items-center justify-center w-full">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                    <div className="flex items-center justify-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500"></div>
                     </div>
                   ) : assets.length === 0 ? (
-                    <Header as="p">No listed assets found.</Header>
+                    <div className="text-center py-8 text-gray-400">
+                      No listed assets found in this contract.
+                    </div>
                   ) : (
-                    <div className="flex flex-col gap-3 w-full items-start justify-start">
-                      <Header as="h5">Listed Assets</Header>
-                      <div className="flex flex-col gap-3 w-full items-start justify-start">
+                    <div className="flex flex-col gap-4">
+                      <h4 className="text-xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text flex items-center gap-2">
+                        <span>{'💎'}</span> Available Assets
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {assets.map((asset: any) => (
                           <div
                             key={asset?.id}
-                            className="flex flex-col gap-2 w-full rounded-xl bg-accent p-3"
+                            className="relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-xl p-5 border border-gray-700/50 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 group"
                           >
-                            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between w-full">
-                              <div className="flex flex-col gap-1">
-                                <Header as="p">
-                                  {asset?.name || 'Untitled'}
-                                </Header>
-                                <Header as="p" className="text-sm text-gray-500">
-                                  {asset?.id}
-                                </Header>
-                                <Header as="p" className="text-sm text-gray-500">
-                                  {Number(asset?.quantityMinted || 0)}/
-                                  {Number(asset?.quantity || 0)} minted
-                                </Header>
-                                <Header as="p" className="text-sm text-gray-500">
+                            <div className="flex flex-col gap-3">
+                              <div>
+                                <h5 className="text-lg font-bold text-white mb-1">{asset?.name || 'Untitled NFT'}</h5>
+                                <p className="text-xs text-gray-500 font-mono truncate">{asset?.id}</p>
+                              </div>
+                              
+                              <div className="flex flex-wrap gap-2">
+                                <div className="px-3 py-1 bg-blue-500/20 border border-blue-500/30 rounded-lg text-sm text-blue-400">
+                                  {Number(asset?.quantityMinted || 0)}/{Number(asset?.quantity || 0)} minted
+                                </div>
+                                <div className="px-3 py-1 bg-green-500/20 border border-green-500/30 rounded-lg text-sm text-green-400 font-semibold">
                                   {(() => {
                                     const rawPrice = asset?.price
-                                    const currencyLabel =
-                                      asset?.loyaltyCurrency?.symbol ||
-                                      asset?.loyaltyCurrency?.name ||
-                                      (asset?.currencyAddress
-                                        ? 'Token'
-                                        : 'ETH')
+                                    const currencyLabel = asset?.loyaltyCurrency?.symbol || asset?.loyaltyCurrency?.name || (asset?.currencyAddress ? 'Token' : 'ETH')
                                     if (!rawPrice || Number(rawPrice) === 0) {
-                                      return currencyLabel
-                                        ? `Free (${currencyLabel})`
-                                        : 'Free'
+                                      return `FREE`
                                     }
-                                    const decimals =
-                                      typeof asset?.currencyDecimals ===
-                                        'number'
-                                        ? asset.currencyDecimals
-                                        : 0
-                                    const priceNumber =
-                                      Number(rawPrice) / 10 ** decimals
-                                    return `Price: ${priceNumber} ${currencyLabel}`
+                                    const decimals = typeof asset?.currencyDecimals === 'number' ? asset.currencyDecimals : 0
+                                    const priceNumber = Number(rawPrice) / 10 ** decimals
+                                    return `${priceNumber} ${currencyLabel}`
                                   })()}
-                                </Header>
+                                </div>
                               </div>
+
                               <Button
-                                variant="secondary"
+                                variant="gradient"
                                 disabled={mintingByAsset[asset?.id]}
-                                onClick={() =>
-                                  handleMint(contract, asset?.id)
-                                }
+                                onClick={() => handleMint(contract, asset?.id)}
+                                className="w-full mt-2"
                               >
-                                {!walletAddress
-                                  ? 'Connect Wallet'
-                                  : mintingByAsset[asset?.id]
-                                    ? 'Minting...'
-                                    : 'Mint'}
+                                {!walletAddress ? (
+                                  <span className="flex items-center justify-center gap-2">
+                                    {'🔗'} Connect Wallet
+                                  </span>
+                                ) : mintingByAsset[asset?.id] ? (
+                                  <span className="flex items-center justify-center gap-2">
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                    Minting...
+                                  </span>
+                                ) : (
+                                  <span className="flex items-center justify-center gap-2">
+                                    {'✨'} Mint NFT
+                                  </span>
+                                )}
                               </Button>
                             </div>
                           </div>
