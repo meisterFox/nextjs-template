@@ -2,7 +2,6 @@ import { SupportedChainId, ViemChainByChainId } from '@/lib/chains'
 import { snag } from '@/lib/snag'
 import { Session, User } from 'next-auth'
 import { type JWT } from 'next-auth/jwt'
-import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { SiweMessage } from 'siwe'
 import { Hex, createPublicClient, getAddress, http } from 'viem'
@@ -166,5 +165,3 @@ export function getAuthOptions() {
     },
   }
 }
-
-export const { GET, POST } = NextAuth(getAuthOptions()) as any
