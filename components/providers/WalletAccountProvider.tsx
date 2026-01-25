@@ -3,7 +3,7 @@
 import { isSupportedChain } from '@/lib/chains'
 import React, { createContext, ReactNode, useContext, useEffect } from 'react'
 import { Chain, Hex } from 'viem'
-import { useAccount, useDisconnect } from 'wagmi'
+import { useAccount, useDisconnect, useConnect } from 'wagmi'
 
 interface WalletAccountContextType {
   address: Hex
@@ -30,6 +30,7 @@ export const WalletAccountProvider: React.FC<{
 }> = ({ children }) => {
   const account = useAccount()
   const { disconnectAsync } = useDisconnect()
+  const { connectors, connect } = useConnect()
 
   useEffect(() => {
     if (account?.chainId) {
@@ -39,6 +40,18 @@ export const WalletAccountProvider: React.FC<{
       switchNetwork({ networkChainId: chainId })
     }
   }, [account?.chainId])
+
+  // Restore last connector on mount
+  useEffect(() => {
+    try {
+      const last = localStorage.getItem('lastConnector')
+      const connector = connectors?.find((c) => c.id === last)
+      if (connector && !account.isConnected) {
+        connect({ connector })
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const switchNetwork = async ({
     networkChainId,

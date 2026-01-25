@@ -49,30 +49,30 @@ export const LoyaltyRuleAction = ({
 
   if (isTwitterRule && !user.userMetadata?.[0]?.twitterUser) {
     return (
-      <Button onClick={() => connectSocial('twitter')}>Connect Twitter</Button>
+      <Button variant="neon" size="sm" onClick={() => connectSocial('twitter')}>Connect Twitter</Button>
     )
   }
 
   if (isDiscordRule && !user.userMetadata?.[0]?.discordUser) {
     return (
-      <Button onClick={() => connectSocial('discord')}>Connect Discord</Button>
+      <Button variant="neon" size="sm" onClick={() => connectSocial('discord')}>Connect Discord</Button>
     )
   }
 
   if (isTelegramRule && !user.userMetadata?.[0]?.telegramUserId) {
     return (
-      <Button onClick={() => connectSocial('telegram')}>
+      <Button variant="neon" size="sm" onClick={() => connectSocial('telegram')}>
         Connect Telegram
       </Button>
     )
   }
 
   if (isSteamRule && !user.userMetadata?.[0]?.steamUserId) {
-    return <Button onClick={() => connectSocial('steam')}>Connect Steam</Button>
+    return <Button variant="neon" size="sm" onClick={() => connectSocial('steam')}>Connect Steam</Button>
   }
 
   if (isEpicRule && !user.userMetadata?.[0]?.epicAccountIdentifier) {
-    return <Button onClick={() => connectSocial('epic')}>Connect Epic</Button>
+    return <Button variant="neon" size="sm" onClick={() => connectSocial('epic')}>Connect Epic</Button>
   }
 
   const isCompleted = !!latestTransaction || !!loyaltyMultiplier
@@ -92,6 +92,9 @@ export const LoyaltyRuleAction = ({
   if (isClaimable && !isCompleted) {
     return (
       <Button
+        variant="gradient"
+        size="sm"
+        glow
         onClick={async () => {
           const message = await claimLoyaltyRule(rule?.id, {
             userId: user.id,

@@ -1,13 +1,12 @@
 # Sound Files
 
-Add your sound effect files here with the following names:
+Add your sound effect files here with the following names (MP3 preferred; WAV works as fallback):
 
-- `click1.mp3` - Default click sound
-- `click2.mp3` - Alternative click sound
-- `pop.mp3` - Pop sound effect
-- `beep.mp3` - Beep sound effect
-- `soft.mp3` - Soft click sound
-- `mechanical.mp3` - Mechanical keyboard sound
+- `click1.mp3` / `click1.wav` - Default click sound
+- `click2.mp3` / `click2.wav` - Alternative click sound
+- `pop.mp3` / `pop.wav` - Pop sound effect
+- `beep.mp3` / `beep.wav` - Beep sound effect
+- `keyboard.mp3` / `keyboard.wav` - Mechanical keyboard sound
 
 You can download free sound effects from:
 - https://freesound.org/

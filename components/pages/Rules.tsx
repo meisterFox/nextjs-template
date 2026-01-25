@@ -268,22 +268,28 @@ export const Rules = () => {
 
   if (isSessionLoading) {
     return (
-      <div className="flex items-center justify-center w-full min-h-[60vh]">
+      <div className="flex flex-col items-center justify-center w-full min-h-[60vh] gap-6">
         <div className="relative">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500"></div>
-          <div className="animate-ping absolute inset-0 rounded-full h-16 w-16 border-4 border-pink-500 opacity-20"></div>
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-600 to-fuchsia-600 animate-float flex items-center justify-center text-4xl">
+            🎯
+          </div>
+          <div className="absolute -inset-4 bg-violet-500/20 rounded-3xl blur-2xl animate-pulse-glow"></div>
         </div>
+        <p className="text-slate-400 animate-pulse">Loading quests...</p>
       </div>
     )
   }
 
   if (isInitialLoad) {
     return (
-      <div className="flex items-center justify-center w-full min-h-[60vh]">
+      <div className="flex flex-col items-center justify-center w-full min-h-[60vh] gap-6">
         <div className="relative">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500"></div>
-          <div className="animate-ping absolute inset-0 rounded-full h-16 w-16 border-4 border-pink-500 opacity-20"></div>
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-600 to-fuchsia-600 animate-float flex items-center justify-center text-4xl">
+            ⚡
+          </div>
+          <div className="absolute -inset-4 bg-fuchsia-500/20 rounded-3xl blur-2xl animate-pulse-glow"></div>
         </div>
+        <p className="text-slate-400 animate-pulse">Preparing your quests...</p>
       </div>
     )
   }
@@ -292,69 +298,85 @@ export const Rules = () => {
 
   if (!isLoyaltyProgramConfigured) {
     return (
-      <div className="flex flex-col gap-4 w-full items-start justify-start">
-        <Header as="h1">Rules</Header>
-        <Header as="h4">No rules found in your loyalty program.</Header>
-        <Header as="p">
-          You have to prepare your loyalty program first. Please go to{' '}
-          <Link href="https://admin.snag-solutions.io" target="_blank">
-            <b>Snag Admin</b>
+      <div className="flex flex-col gap-6 w-full items-center justify-center min-h-[60vh] max-w-2xl mx-auto text-center p-8">
+        <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center text-5xl mb-4">
+          📋
+        </div>
+        <h1 className="text-4xl font-bold text-white">No Rules Found</h1>
+        <p className="text-slate-400 leading-relaxed">
+          You need to configure your loyalty program first. Go to{' '}
+          <Link href="https://admin.snag-solutions.io" target="_blank" className="text-violet-400 hover:text-violet-300 underline">
+            Snag Admin
           </Link>{' '}
-          and create a loyalty currency first. Then you can run the script to
-          create the example rules set.
-        </Header>
+          and create a loyalty currency, then run the script to create example rules.
+        </p>
         <Code data={`pnpm create:rules`} />
       </div>
     )
   }
 
   return (
-    <div className="flex flex-col gap-8 w-full items-start justify-start max-w-7xl mx-auto p-4 sm:p-8">
+    <div className="flex flex-col gap-10 w-full items-start justify-start max-w-7xl mx-auto p-4 sm:p-8">
       {/* Hero Header */}
-      <div className="w-full text-center space-y-4 py-8">
-        <div className="inline-block">
-          <h1 className="text-6xl sm:text-7xl font-black bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent animate-gradient">
+      <div className="w-full text-center space-y-6 py-12 relative">
+        {/* Background Glow */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-violet-600/20 via-fuchsia-500/20 to-orange-500/20 rounded-full blur-[100px]"></div>
+        </div>
+        
+        <div className="inline-block animate-fadeIn">
+          <span className="px-4 py-2 glass-card rounded-full text-sm text-violet-300 mb-4 inline-block">
+            🎯 Earn Rewards
+          </span>
+          <h1 className="text-5xl sm:text-7xl font-black text-gradient-rainbow mt-4">
             Quest Rules
           </h1>
-          <div className="h-2 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 rounded-full mt-2 animate-pulse"></div>
+          <div className="h-1.5 w-36 mx-auto bg-gradient-to-r from-violet-500 via-fuchsia-500 to-orange-500 rounded-full mt-4 animate-pulse-glow"></div>
         </div>
-        <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto">
+        <p className="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto animate-fadeIn stagger-1">
           Complete quests, earn rewards, and unlock amazing multipliers
         </p>
       </div>
 
       {/* Multiplier Stats Card */}
       {!!multipliers?.length && (
-        <div className="w-full bg-gradient-to-br from-indigo-500/20 to-purple-600/20 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-indigo-500/30 shadow-2xl">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="w-full glass-card card-hover rounded-2xl p-6 sm:p-8 neon-purple animate-fadeIn stagger-1">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-4">
-              <div className="text-5xl">{'⚡'}</div>
+              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-4xl shadow-lg shadow-amber-500/30 animate-float">
+                ⚡
+              </div>
               <div>
-                <h3 className="text-2xl font-bold text-transparent bg-gradient-to-r from-yellow-300 to-orange-500 bg-clip-text">
-                  Your Total Multiplier
-                </h3>
-                <p className="text-sm text-gray-400">Boost your rewards</p>
+                <p className="text-sm text-slate-400 uppercase tracking-wider">Your Total</p>
+                <h3 className="text-2xl font-bold text-white">Multiplier</h3>
               </div>
             </div>
-            <div className="text-5xl font-black text-transparent bg-gradient-to-r from-yellow-300 to-orange-500 bg-clip-text">
+            <div className="text-5xl font-black text-gradient-rainbow">
               {calcUserTotalMultiplier()}x
             </div>
           </div>
           <a
-            className="text-sm text-indigo-400 hover:text-indigo-300 underline mt-4 inline-block transition-colors"
+            className="text-sm text-violet-400 hover:text-violet-300 transition-colors mt-4 inline-flex items-center gap-2"
             target="_blank"
             href="https://docs.snagsolutions.io/loyalty/multipliers"
           >
-            {'📚'} Learn how multipliers work
+            📚 Learn how multipliers work →
           </a>
         </div>
       )}
 
       {/* Rules Grid */}
-      <div className="w-full">
-        <h2 className="text-4xl font-bold mb-8 text-transparent bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text flex items-center gap-3">
-          <span className="text-3xl">{'🎯'}</span> Active Quests
-        </h2>
+      <div className="w-full animate-fadeIn stagger-2">
+        <div className="flex items-center gap-4 mb-8">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center text-2xl shadow-lg shadow-violet-500/30">
+            🎯
+          </div>
+          <div>
+            <h2 className="text-3xl font-bold text-white">Active Quests</h2>
+            <p className="text-slate-400">{rules.length} quests available</p>
+          </div>
+        </div>
+        
         <div className="grid grid-cols-1 gap-6">
           {rules.map((rule, ruleIndex) => {
           const transaction = latestRuleTransactions[rule.id]
@@ -375,19 +397,19 @@ export const Rules = () => {
           return (
             <div
               key={rule?.id}
-              className="group relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl overflow-hidden border border-gray-700/50 hover:border-purple-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20 hover:scale-[1.02]"
+              className={`group glass-card card-hover rounded-2xl overflow-hidden stagger-${(ruleIndex % 5) + 1} ${completedAt ? 'border-emerald-500/30' : ''}`}
             >
               {/* Completed Badge */}
               {completedAt && (
-                <div className="absolute top-4 right-4 z-10 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg flex items-center gap-2">
-                  <span>{'\u2713'}</span> Completed
+                <div className="absolute top-4 right-4 z-10 bg-gradient-to-r from-emerald-500 to-cyan-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg shadow-emerald-500/30 flex items-center gap-2">
+                  ✓ Completed
                 </div>
               )}
 
               <div className="flex flex-col lg:flex-row gap-6 p-6">
                 {/* Rule Image */}
                 {rule?.mediaUrl && (
-                  <div className="flex-shrink-0 w-full lg:w-48 h-48 relative overflow-hidden rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 group-hover:scale-105 transition-transform duration-300">
+                  <div className="flex-shrink-0 w-full lg:w-48 h-48 relative overflow-hidden rounded-xl glass group-hover:scale-105 transition-transform duration-500">
                     <img
                       src={rule?.mediaUrl}
                       alt={rule?.name ?? ''}
@@ -400,10 +422,10 @@ export const Rules = () => {
                 {/* Rule Content */}
                 <div className="flex-1 flex flex-col gap-4">
                   <div>
-                    <h3 className="text-2xl font-bold mb-2 text-transparent bg-gradient-to-r from-white to-gray-300 bg-clip-text">
+                    <h3 className="text-2xl font-bold mb-2 text-white group-hover:text-violet-300 transition-colors">
                       {rule?.name}
                     </h3>
-                    <p className="text-gray-400 leading-relaxed">
+                    <p className="text-slate-400 leading-relaxed">
                       {rule?.description}
                     </p>
                   </div>
@@ -411,44 +433,44 @@ export const Rules = () => {
                   {/* Status Indicators */}
                   <div className="flex flex-wrap gap-3">
                     {completedAt && (
-                      <div className="px-4 py-2 rounded-lg bg-green-500/20 border border-green-500/30 backdrop-blur-sm">
-                        <div className="text-sm text-green-400 font-semibold">
-                          {'\ud83c\udf89'} Completed: {new Date(completedAt).toLocaleDateString()}
+                      <div className="glass rounded-xl px-4 py-3 border border-emerald-500/30">
+                        <div className="text-sm text-emerald-400 font-semibold flex items-center gap-2">
+                          🎉 Completed: {new Date(completedAt).toLocaleDateString()}
                         </div>
                         {!!transaction && (
-                          <div className="text-xs text-green-300 mt-1">
-                            Reward: {transaction.amount} points
+                          <div className="text-xs text-emerald-300 mt-1">
+                            +{transaction.amount} points earned
                           </div>
                         )}
                         {!!loyaltyMultiplier && (
-                          <div className="text-xs text-yellow-300 mt-1">
-                            {'\u26a1'} Multiplier: {loyaltyMultiplier.multiplier}x
+                          <div className="text-xs text-amber-300 mt-1 flex items-center gap-1">
+                            ⚡ {loyaltyMultiplier.multiplier}x multiplier
                           </div>
                         )}
                       </div>
                     )}
 
                     {processingStatus && (
-                      <div className={`px-4 py-2 rounded-lg backdrop-blur-sm ${
+                      <div className={`glass rounded-xl px-4 py-3 ${
                         processingStatus.status === 'pending'
-                          ? 'bg-yellow-500/20 border border-yellow-500/30'
+                          ? 'border border-amber-500/30'
                           : processingStatus.status === 'completed'
-                          ? 'bg-green-500/20 border border-green-500/30'
-                          : 'bg-red-500/20 border border-red-500/30'
+                          ? 'border border-emerald-500/30'
+                          : 'border border-red-500/30'
                       }`}>
-                        <div className={`text-sm font-semibold ${
+                        <div className={`text-sm font-semibold flex items-center gap-2 ${
                           processingStatus.status === 'pending'
-                            ? 'text-yellow-400'
+                            ? 'text-amber-400'
                             : processingStatus.status === 'completed'
-                            ? 'text-green-400'
+                            ? 'text-emerald-400'
                             : 'text-red-400'
                         }`}>
-                          {processingStatus.status === 'pending' && <>{'\u23f3'} Processing...</>}
-                          {processingStatus.status === 'completed' && <>{'\u2713'} Complete</>}
-                          {processingStatus.status === 'failed' && <>{'\u2717'} Failed</>}
+                          {processingStatus.status === 'pending' && <>⏳ Processing...</>}
+                          {processingStatus.status === 'completed' && <>✓ Complete</>}
+                          {processingStatus.status === 'failed' && <>✕ Failed</>}
                         </div>
                         {processingStatus.message && (
-                          <div className="text-xs text-gray-400 mt-1">
+                          <div className="text-xs text-slate-400 mt-1">
                             {processingStatus.message}
                           </div>
                         )}
@@ -456,25 +478,31 @@ export const Rules = () => {
                     )}
 
                     {!!progress && (
-                      <div className="px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 backdrop-blur-sm">
-                        <div className="text-sm text-blue-400 font-semibold">
-                          {'\ud83d\udcca'} Progress: {progress.progress}%
+                      <div className="glass rounded-xl px-4 py-3 border border-cyan-500/30">
+                        <div className="text-sm text-cyan-400 font-semibold flex items-center gap-2">
+                          📊 Progress: {progress.progress}%
+                        </div>
+                        <div className="w-full h-1.5 bg-slate-700 rounded-full mt-2 overflow-hidden">
+                          <div 
+                            className="h-full bg-gradient-to-r from-cyan-500 to-violet-500 rounded-full transition-all duration-500"
+                            style={{ width: `${progress.progress}%` }}
+                          ></div>
                         </div>
                       </div>
                     )}
                   </div>
 
                   {/* Time Information */}
-                  <div className="flex flex-wrap gap-3 text-sm">
+                  <div className="flex flex-wrap gap-4 text-sm">
                     {rule.startTime && (
-                      <div className="text-gray-500">
-                        {'\ud83d\udd50'} Started: {new Date(rule.startTime).toLocaleDateString()}
-                      </div>
+                      <span className="text-slate-500 flex items-center gap-1">
+                        🕐 Started: {new Date(rule.startTime).toLocaleDateString()}
+                      </span>
                     )}
                     {rule.endTime && (
-                      <div className="text-red-400 font-semibold animate-pulse">
-                        {'\u23f0'} Expires: {new Date(rule.endTime).toLocaleDateString()}
-                      </div>
+                      <span className="text-orange-400 font-semibold flex items-center gap-1 animate-pulse">
+                        ⏰ Expires: {new Date(rule.endTime).toLocaleDateString()}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -485,9 +513,9 @@ export const Rules = () => {
                     <a
                       href={ruleMetadata?.cta?.href}
                       target="_blank"
-                      className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2 whitespace-nowrap"
+                      className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-xl font-semibold shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all duration-300 hover:scale-105 flex items-center gap-2 whitespace-nowrap"
                     >
-                      {ruleMetadata?.cta?.label ?? 'Learn More'} {'\u2192'}
+                      {ruleMetadata?.cta?.label ?? 'Learn More'} →
                     </a>
                   )}
 
@@ -509,12 +537,13 @@ export const Rules = () => {
             </div>
           )
         })}
+        
         {hasMore && (
-          <div className="w-full flex justify-center mt-8">
+          <div className="w-full flex justify-center mt-10">
             <button
               onClick={() => loadRules(lastId || undefined)}
               disabled={isLoading}
-              className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white rounded-2xl font-bold shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="px-8 py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white rounded-xl font-bold shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {isLoading ? (
                 <span className="flex items-center gap-3">
@@ -522,7 +551,7 @@ export const Rules = () => {
                   Loading...
                 </span>
               ) : (
-                'Load More Quests'
+                'Load More Quests →'
               )}
             </button>
           </div>

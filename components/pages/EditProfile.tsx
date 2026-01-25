@@ -103,16 +103,21 @@ export default function EditProfile({ isOpen, onClose, currentProfile, onSave }:
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 rounded-2xl shadow-2xl max-w-2xl w-full border border-slate-700/50 animate-fade-in">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
+      <div className="glass rounded-3xl shadow-2xl max-w-2xl w-full border border-white/10 animate-scaleIn">
         {/* Header */}
-        <div className="border-b border-slate-700/50 px-6 py-4 flex justify-between items-center">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-            Edit Profile
-          </h2>
+        <div className="border-b border-white/10 px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center text-xl shadow-lg shadow-violet-500/30">
+              ✏️
+            </div>
+            <h2 className="text-2xl font-bold text-gradient-purple">
+              Edit Profile
+            </h2>
+          </div>
           <button
             onClick={handleClose}
-            className="text-slate-400 hover:text-slate-200 transition-colors"
+            className="w-10 h-10 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all"
           >
             ✕
           </button>
@@ -124,7 +129,7 @@ export default function EditProfile({ isOpen, onClose, currentProfile, onSave }:
             {/* Profile Image Section */}
             <div className="md:col-span-1">
               <div
-                className="relative w-32 h-32 mx-auto mb-4 rounded-2xl overflow-hidden bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-slate-600/50 flex items-center justify-center cursor-pointer hover:border-slate-500/80 transition-all group"
+                className="relative w-32 h-32 mx-auto mb-4 rounded-2xl overflow-hidden glass neon-purple flex items-center justify-center cursor-pointer hover:scale-105 transition-all group"
                 onClick={() => fileInputRef.current?.click()}
               >
                 {previewImage ? (
@@ -154,7 +159,7 @@ export default function EditProfile({ isOpen, onClose, currentProfile, onSave }:
             <div className="md:col-span-2 space-y-4">
               {/* Display Name */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2 uppercase tracking-wider">
                   Display Name
                 </label>
                 <input
@@ -162,14 +167,14 @@ export default function EditProfile({ isOpen, onClose, currentProfile, onSave }:
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   placeholder="Your display name"
-                  className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all"
+                  className="w-full px-4 py-3 glass border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-violet-500/50 focus:neon-purple transition-all"
                   maxLength={50}
                 />
               </div>
 
               {/* Location */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2 uppercase tracking-wider">
                   Location
                 </label>
                 <input
@@ -177,14 +182,14 @@ export default function EditProfile({ isOpen, onClose, currentProfile, onSave }:
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="City, Country"
-                  className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all"
+                  className="w-full px-4 py-3 glass border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-violet-500/50 transition-all"
                   maxLength={100}
                 />
               </div>
 
               {/* NFT Portfolio */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2 uppercase tracking-wider">
                   NFT Portfolio URL
                 </label>
                 <input
@@ -192,7 +197,7 @@ export default function EditProfile({ isOpen, onClose, currentProfile, onSave }:
                   value={portfolioUrl}
                   onChange={(e) => setPortfolioUrl(e.target.value)}
                   placeholder="https://yourportfolio.com"
-                  className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all"
+                  className="w-full px-4 py-3 glass border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-violet-500/50 transition-all"
                 />
               </div>
             </div>
@@ -200,7 +205,7 @@ export default function EditProfile({ isOpen, onClose, currentProfile, onSave }:
 
           {/* About Section */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-slate-300 mb-2 uppercase tracking-wider">
               About
             </label>
             <textarea
@@ -208,7 +213,7 @@ export default function EditProfile({ isOpen, onClose, currentProfile, onSave }:
               onChange={(e) => setAbout(e.target.value)}
               placeholder="Tell us about yourself..."
               rows={4}
-              className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all resize-none"
+              className="w-full px-4 py-3 glass border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-violet-500/50 transition-all resize-none"
               maxLength={500}
             />
             <p className="text-xs text-slate-400 mt-1">{about.length}/500</p>
@@ -216,25 +221,25 @@ export default function EditProfile({ isOpen, onClose, currentProfile, onSave }:
 
           {/* Error Message */}
           {error && (
-            <div className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+            <div className="mt-4 p-3 glass rounded-xl border border-red-500/30 neon-pink text-red-400 text-sm">
               {error}
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="border-t border-slate-700/50 px-6 py-4 flex justify-end gap-3">
+        <div className="border-t border-white/10 px-6 py-4 flex justify-end gap-3">
           <button
             onClick={handleClose}
             disabled={isSaving}
-            className="px-6 py-2 rounded-lg bg-slate-700/50 border border-slate-600/50 text-slate-200 hover:bg-slate-700/70 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 rounded-xl glass border border-white/10 text-slate-200 hover:bg-white/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="px-6 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:from-blue-700 hover:to-cyan-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+            className="px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed font-semibold shadow-lg shadow-violet-500/25"
           >
             {isSaving ? 'Saving...' : 'Save Profile'}
           </button>

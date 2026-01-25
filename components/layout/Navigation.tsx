@@ -10,37 +10,55 @@ export const Navigation = () => {
   const pathname = usePathname()
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-2xl bg-black/30 border-b border-white/10 shadow-2xl">
+    <header className="sticky top-0 z-50 glass border-b border-white/5">
       <div className="h-20 flex gap-6 flex-wrap items-center justify-start px-6 sm:px-12 max-w-7xl mx-auto">
         <div className="flex flex-row gap-4 w-full items-center justify-between">
+          {/* Logo */}
           <Link href="/" className="group flex items-center gap-3">
             <div className="relative">
-              <Image src="/logo.svg" alt="Logo" width={140} height={50} className="brightness-0 invert group-hover:scale-110 transition-transform duration-300" />
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300"></div>
+              <div className="absolute -inset-2 bg-gradient-to-r from-violet-600 via-cyan-500 to-fuchsia-500 rounded-xl blur-lg opacity-0 group-hover:opacity-40 transition-all duration-500"></div>
+              <Image 
+                src="/logo.svg" 
+                alt="Logo" 
+                width={140} 
+                height={50} 
+                className="relative brightness-0 invert group-hover:scale-105 transition-transform duration-300" 
+              />
             </div>
           </Link>
           
-          <nav className="flex flex-row gap-2 items-center justify-end">
+          {/* Navigation */}
+          <nav className="flex flex-row gap-1 items-center justify-end">
             {routes.map((r) => {
               const isActive = pathname === r.path
               return (
                 <Link
                   key={r.path}
-                  className={`relative px-4 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105 ${
+                  className={`relative px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 overflow-hidden group ${
                     isActive
-                      ? 'text-white bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg shadow-purple-500/50'
-                      : 'text-gray-300 hover:text-white hover:bg-white/10'
+                      ? 'text-white'
+                      : 'text-gray-400 hover:text-white'
                   }`}
                   href={r.path}
                 >
-                  {r.name}
+                  {/* Active background */}
                   {isActive && (
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-violet-600/80 to-fuchsia-600/80 rounded-xl"></div>
+                  )}
+                  {/* Hover background */}
+                  <div className="absolute inset-0 bg-white/0 group-hover:bg-white/5 rounded-xl transition-all duration-300"></div>
+                  {/* Text */}
+                  <span className="relative z-10">{r.name}</span>
+                  {/* Active glow */}
+                  {isActive && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-xl blur-xl opacity-50 -z-10"></div>
                   )}
                 </Link>
               )
             })}
-            <SignIn />
+            <div className="ml-2 pl-2 border-l border-white/10">
+              <SignIn />
+            </div>
           </nav>
         </div>
       </div>

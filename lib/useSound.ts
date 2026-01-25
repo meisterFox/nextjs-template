@@ -32,11 +32,22 @@ export const useSound = () => {
   const playSound = (soundType?: string) => {
     if (!settings.soundEnabled) return
 
-    try {
-      const sound = soundType || settings.selectedSound
-      const audio = new Audio(`/sounds/${sound}.mp3`)
+    const sound = soundType || settings.selectedSound
+
+    const tryPlay = (ext: 'mp3' | 'wav') => {
+      const audio = new Audio(`/sounds/${sound}.${ext}`)
       audio.volume = settings.volume / 100
+      audio.onerror = () => {
+        if (ext === 'mp3') {
+          // Fallback to wav if mp3 is missing
+          tryPlay('wav')
+        }
+      }
       audio.play().catch(e => console.log('Audio play failed:', e))
+    }
+
+    try {
+      tryPlay('mp3')
     } catch (e) {
       console.error('Sound playback error:', e)
     }

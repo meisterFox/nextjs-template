@@ -1,6 +1,6 @@
 import { useWalletAccount } from '@/components/providers/WalletAccountProvider'
 import { getCsrfToken, signIn, signOut, useSession } from 'next-auth/react'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { SiweMessage } from 'siwe'
 import { useConnect, useSignMessage } from 'wagmi'
 
@@ -62,18 +62,113 @@ export const useAuthAccount = () => {
   const session = useSession()
   const account = useWalletAccount()
   const signMessageWagmi = useSignMessage()
-  const { connectors, connect } = useConnect()
+  const { connectors, connectAsync } = useConnect()
   const isAuthenticated = useMemo(
     () => !!session.data?.user,
     [session.data?.user]
   )
-
-  useEffect(() => {
-    async function connectWallet() {
-      await signInWallet(account, signMessageWagmi)
+  
+  // Prevent multiple sign-in attempts
+  const isSigningRef = useRef(false)
+  // Track last attempted address to prevent duplicates
+  const lastAttemptedAddressRef = useRef<string | null>(null)
+  
+  // Get list of already authenticated addresses from localStorage
+  const getAuthenticatedAddresses = (): string[] => {
+    try {
+      const stored = localStorage.getItem('authenticatedAddresses')
+      return stored ? JSON.parse(stored) : []
+    } catch {
+      return []
     }
-    if (account.address && session.status === 'unauthenticated') connectWallet()
-  }, [account.address, session.status])
+  }
+  
+  const addAuthenticatedAddress = (address: string) => {
+    try {
+      const addresses = getAuthenticatedAddresses()
+      const lowerAddr = address.toLowerCase()
+      if (!addresses.includes(lowerAddr)) {
+        addresses.push(lowerAddr)
+        localStorage.setItem('authenticatedAddresses', JSON.stringify(addresses))
+        console.log('💾 Saved authenticated address:', lowerAddr, 'Total:', addresses.length)
+      }
+    } catch {}
+  }
+  
+  const isAddressAuthenticated = (address: string): boolean => {
+    const addresses = getAuthenticatedAddresses()
+    const isAuth = addresses.includes(address.toLowerCase())
+    console.log('🔍 Checking if authenticated:', address.toLowerCase(), '→', isAuth, 'List:', addresses)
+    return isAuth
+  }
+
+  // Single unified effect for all auth logic
+  useEffect(() => {
+    // Debounce to prevent rapid multiple calls
+    const timeoutId = setTimeout(async () => {
+      const currentAddr = account.address?.toLowerCase()
+      const sessionAddr = session.data?.address?.toLowerCase()
+      
+      // Skip if no wallet address
+      if (!currentAddr) return
+      
+      // Skip if already signing
+      if (isSigningRef.current) return
+      
+      // Skip if we already attempted this address
+      if (lastAttemptedAddressRef.current === currentAddr) {
+        console.log('⏭️ Already attempted sign-in for this address, skipping:', currentAddr)
+        return
+      }
+      
+      // Case 1: Not authenticated - need to sign in
+      if (session.status === 'unauthenticated') {
+        isSigningRef.current = true
+        lastAttemptedAddressRef.current = currentAddr
+        
+        try {
+          console.log('🔐 Requesting sign-in for:', currentAddr)
+          await signInWallet(account, signMessageWagmi)
+          addAuthenticatedAddress(currentAddr)
+          console.log('✅ Sign-in successful for:', currentAddr)
+        } catch (e: any) {
+          const msg = e?.message?.toLowerCase() || ''
+          const isUserRejection = msg.includes('rejected') || 
+                                  msg.includes('denied') || 
+                                  msg.includes('cancelled') ||
+                                  msg.includes('canceled') ||
+                                  msg.includes('user refused') ||
+                                  msg.includes('user closed')
+          if (!isUserRejection) {
+            console.error('Sign-in error:', e)
+          }
+          // Reset on rejection so user can try again
+          if (isUserRejection) {
+            lastAttemptedAddressRef.current = null
+          }
+        } finally {
+          isSigningRef.current = false
+        }
+        return
+      }
+      
+      // Case 2: Authenticated but address changed
+      if (session.status === 'authenticated' && sessionAddr && currentAddr !== sessionAddr) {
+        // Check if new address was already authenticated
+        if (isAddressAuthenticated(currentAddr)) {
+          console.log('🔄 Switching to previously authenticated address:', currentAddr)
+          return
+        }
+        
+        // New address - sign out (will trigger Case 1 on next render)
+        console.log('🆕 New address detected, signing out:', currentAddr)
+        lastAttemptedAddressRef.current = null // Reset for new address
+        await signOut({ redirect: false })
+      }
+    }, 300) // 300ms debounce - longer to catch more duplicates
+    
+    return () => clearTimeout(timeoutId)
+  }, [account.address, session.status, session.data?.address])
 
   return {
     isAuthenticated,
@@ -83,9 +178,12 @@ export const useAuthAccount = () => {
     isLoading: session.status === 'loading',
     connect: async () => {
       try {
-        await connect({
-          connector: connectors?.[0],
-        })
+        const connector = connectors?.[0]
+        if (!connector) throw new Error('No connector found')
+        await connectAsync({ connector })
+        try {
+          localStorage.setItem('lastConnector', connector.id)
+        } catch {}
       } catch (err: unknown) {
         console.error(err instanceof Error ? err?.message : 'Unknown error')
       }
@@ -96,6 +194,9 @@ export const useAuthAccount = () => {
           redirect: false,
         })
         await account.disconnectWallet()
+        try {
+          localStorage.removeItem('lastConnector')
+        } catch {}
       } catch (err: unknown) {
         console.error(err instanceof Error ? err?.message : 'Unknown error')
       }

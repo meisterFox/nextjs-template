@@ -11,15 +11,16 @@ export const Code = ({ data }: CodeProps) => {
   }
 
   return (
-    <code className="w-full relative rounded-lg">
+    <code className="w-full relative glass-card rounded-2xl overflow-hidden">
       <Button
         className="absolute top-4 right-4"
         onClick={handleCopy}
-        variant="secondary"
+        variant="glass"
+        size="sm"
       >
-        Copy Text
+        📋 Copy
       </Button>
-      <pre className="max-h-64 min-h-32 overflow-auto p-4 text-sm font-mono whitespace-pre-wrap">
+      <pre className="max-h-64 min-h-32 overflow-auto p-4 text-sm font-mono whitespace-pre-wrap text-slate-300">
         {JSON.stringify(data, null, 2)}
       </pre>
     </code>

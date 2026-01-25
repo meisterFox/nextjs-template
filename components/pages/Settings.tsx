@@ -58,11 +58,19 @@ export const Settings = () => {
 
   const playSound = (soundType: string) => {
     if (!soundEnabled) return
-    
-    // Create audio element and play
-    const audio = new Audio(`/sounds/${soundType}.mp3`)
-    audio.volume = volume / 100
-    audio.play().catch(e => console.log('Audio play failed:', e))
+
+    const tryPlay = (ext: 'mp3' | 'wav') => {
+      const audio = new Audio(`/sounds/${soundType}.${ext}`)
+      audio.volume = volume / 100
+      audio.onerror = () => {
+        if (ext === 'mp3') {
+          tryPlay('wav')
+        }
+      }
+      audio.play().catch(e => console.log('Audio play failed:', e))
+    }
+
+    tryPlay('mp3')
   }
 
   return (
@@ -145,7 +153,7 @@ export const Settings = () => {
           <div className="p-4 bg-slate-800/50 rounded-xl border border-slate-700/30">
             <h3 className="text-xl font-semibold text-white mb-4">Click Sound</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {['click1', 'click2', 'pop', 'beep', 'soft', 'mechanical'].map((sound) => (
+              {['click1', 'click2', 'pop', 'beep', 'keyboard'].map((sound) => (
                 <button
                   key={sound}
                   onClick={() => handleSoundChange(sound)}

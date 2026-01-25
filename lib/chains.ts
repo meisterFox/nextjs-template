@@ -1,4 +1,4 @@
-import { base, Chain, mainnet } from 'viem/chains'
+import { base, Chain, mainnet, arbitrum, optimism, polygon } from 'viem/chains'
 
 /**
  * SupportedChainId
@@ -6,7 +6,7 @@ import { base, Chain, mainnet } from 'viem/chains'
  * This type is used to define the supported chain IDs in the application.
  * You can extend this type to add more chain IDs as needed.
  */
-export type SupportedChainId = 1 | 8453
+export type SupportedChainId = 1 | 8453 | 42161 | 10 | 137
 
 /**
  * isSupportedChain
@@ -17,7 +17,7 @@ export type SupportedChainId = 1 | 8453
 export const isSupportedChain = (
   chainId: unknown
 ): chainId is SupportedChainId => {
-  return [1, 8453].includes(Number(chainId))
+  return [1, 8453, 42161, 10, 137].includes(Number(chainId))
 }
 
 /**
@@ -29,6 +29,9 @@ export const isSupportedChain = (
 export const ViemChainByChainId: { [key in SupportedChainId]: Chain } = {
   1: mainnet,
   8453: base,
+  42161: arbitrum,
+  10: optimism,
+  137: polygon,
 }
 
 /**
@@ -40,7 +43,7 @@ export const ViemChainByChainId: { [key in SupportedChainId]: Chain } = {
  * You can extend this function to add more chains as needed.
  */
 export const getAllSupportedChains = () => {
-  return [mainnet, base] as readonly [Chain, ...Chain[]]
+  return [mainnet, base, arbitrum, optimism, polygon] as readonly [Chain, ...Chain[]]
 }
 
 type NetworkKey =

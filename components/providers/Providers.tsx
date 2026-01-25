@@ -8,7 +8,7 @@ import { SessionProvider } from 'next-auth/react'
 import { ReactNode } from 'react'
 import { createClient, http } from 'viem'
 import { createConfig, WagmiProvider } from 'wagmi'
-import { injected } from 'wagmi/connectors'
+import { coinbaseWallet, metaMask, walletConnect } from 'wagmi/connectors'
 import { ErrorHandlerProvider } from './ErrorHandlerProvider'
 
 type ProvidersProps = {
@@ -16,9 +16,16 @@ type ProvidersProps = {
 }
 
 export const defaultWagmiConfig = () => {
+  // WalletConnect projectId - get yours at https://cloud.walletconnect.com/
+  const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '3a8170812b534d0ff9d794f19a901d64'
+  
   return createConfig({
     chains: getAllSupportedChains(),
-    connectors: [injected()],
+    connectors: [
+      metaMask(),
+      coinbaseWallet({ appName: 'Snag Loyalty' }),
+      walletConnect({ projectId }),
+    ],
     ssr: true,
     client({ chain }) {
       return createClient({ chain, transport: http() })
