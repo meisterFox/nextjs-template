@@ -142,13 +142,15 @@ export const Home = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {pastRewards.map((reward) => {
-              const imageUrl =
-                reward?.metadata?.image ||
-                reward?.metadata?.image_url ||
-                reward?.metadata?.imageUrl ||
-                reward?.metadata?.imageURI ||
+              const rawImageUrl =
+                reward?.imageUrl ||
                 reward?.image ||
-                reward?.previewImage
+                reward?.previewImage ||
+                reward?.animationUrl
+              const imageUrl = rawImageUrl?.startsWith('ipfs://')
+                ? rawImageUrl.replace('ipfs://', 'https://ipfs.io/ipfs/')
+                : rawImageUrl
+              const isVideo = imageUrl && (imageUrl.endsWith('.mp4') || imageUrl.endsWith('.webm') || imageUrl.includes('.mp4') || imageUrl.includes('.webm'))
               const statusLabel = reward?.status === 'past' ? 'Minting Ended' : reward?.status || 'Ended'
               const contractId = reward?.mintingContractId || reward?.contractId
               const href = contractId
@@ -159,11 +161,21 @@ export const Home = () => {
                 <div className="group relative flex flex-col h-full bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-xl rounded-2xl border border-gray-700/60 hover:border-amber-500/60 transition-all duration-300 overflow-hidden hover:shadow-2xl hover:shadow-amber-500/10">
                   <div className="relative aspect-[4/3] overflow-hidden">
                     {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt={reward?.name || 'Past reward'}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
+                      isVideo ? (
+                        <video
+                          src={imageUrl}
+                          className="h-full w-full object-cover"
+                          muted
+                          loop
+                          playsInline
+                        />
+                      ) : (
+                        <img
+                          src={imageUrl}
+                          alt={reward?.name || 'Past reward'}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      )
                     ) : (
                       <div className="h-full w-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center text-3xl">
                         {'🎁'}
@@ -226,13 +238,15 @@ export const Home = () => {
         const detailHref = selectedReward?.mintingContractId || selectedReward?.contractId
           ? `/minting/contracts/${selectedReward.mintingContractId || selectedReward.contractId}/assets/${selectedReward.id}`
           : null
-        const modalImage =
-          selectedReward?.metadata?.image ||
-          selectedReward?.metadata?.image_url ||
-          selectedReward?.metadata?.imageUrl ||
-          selectedReward?.metadata?.imageURI ||
+        const rawModalImage =
+          selectedReward?.imageUrl ||
           selectedReward?.image ||
-          selectedReward?.previewImage
+          selectedReward?.previewImage ||
+          selectedReward?.animationUrl
+        const modalImage = rawModalImage?.startsWith('ipfs://')
+          ? rawModalImage.replace('ipfs://', 'https://ipfs.io/ipfs/')
+          : rawModalImage
+        const isModalVideo = modalImage && (modalImage.endsWith('.mp4') || modalImage.endsWith('.webm') || modalImage.includes('.mp4') || modalImage.includes('.webm'))
 
         return (
           <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8 bg-black/70 backdrop-blur-sm">
@@ -246,11 +260,22 @@ export const Home = () => {
               <div className="grid md:grid-cols-2 gap-0">
                 <div className="relative bg-gray-900">
                   {modalImage ? (
-                    <img
-                      src={modalImage}
-                      alt={selectedReward?.name || 'Past reward'}
-                      className="w-full h-full object-cover"
-                    />
+                    isModalVideo ? (
+                      <video
+                        src={modalImage}
+                        controls
+                        className="w-full h-full object-cover"
+                        muted
+                        loop
+                        playsInline
+                      />
+                    ) : (
+                      <img
+                        src={modalImage}
+                        alt={selectedReward?.name || 'Past reward'}
+                        className="w-full h-full object-cover"
+                      />
+                    )
                   ) : (
                     <div className="h-full w-full aspect-square bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center text-5xl">
                       {'🎁'}
@@ -271,25 +296,36 @@ export const Home = () => {
                   <div className="grid grid-cols-2 gap-4 text-sm text-gray-300 bg-gray-800/40 border border-gray-700/60 rounded-2xl p-4">
                     <div>
                       <p className="text-gray-500 text-xs">Asset nr</p>
-                      <p className="font-semibold">{selectedReward?.assetNr ?? '—'}</p>
+                      <p className="font-semibold">#{selectedReward?.assetNr ?? '—'}</p>
                     </div>
                     <div>
-                      <p className="text-gray-500 text-xs">Token ID</p>
-                      <p className="font-mono">{selectedReward?.tokenId ?? selectedReward?.id ?? '—'}</p>
+                      <p className="text-gray-500 text-xs">Asset ID</p>
+                      <p className="font-mono text-xs break-all">{selectedReward?.id?.substring(0, 8) ?? '—'}...</p>
                     </div>
                     <div>
-                      <p className="text-gray-500 text-xs">Contract</p>
-                      <p className="font-mono break-all">{selectedReward?.contractAddress || selectedReward?.mintingContractId || '—'}</p>
+                      <p className="text-gray-500 text-xs">Price</p>
+                      <p className="font-semibold">
+                        {selectedReward?.price && Number(selectedReward.price) > 0
+                          ? `${selectedReward.price} ${selectedReward?.loyaltyCurrency?.symbol || selectedReward?.loyaltyCurrency?.name || ''}`
+                          : 'FREE'}
+                      </p>
                     </div>
                     <div>
-                      <p className="text-gray-500 text-xs">Network</p>
-                      <p>{selectedReward?.network || selectedReward?.chain || '—'}</p>
+                      <p className="text-gray-500 text-xs">Minted</p>
+                      <p className="font-semibold">{selectedReward?.quantityMinted ?? 0} / {selectedReward?.quantity ?? 0}</p>
                     </div>
                   </div>
 
-                  {selectedReward?.metadata?.description && (
+                  {selectedReward?.description && (
                     <div className="bg-gray-800/30 border border-gray-700/50 rounded-2xl p-4 text-sm text-gray-200 leading-relaxed">
-                      {selectedReward.metadata.description}
+                      {selectedReward.description}
+                    </div>
+                  )}
+
+                  {selectedReward?.collectInfoCustomInputLabel && (
+                    <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl p-4 text-sm text-blue-200 leading-relaxed">
+                      <p className="text-blue-300 font-semibold mb-1">Required Info:</p>
+                      {selectedReward.collectInfoCustomInputLabel}
                     </div>
                   )}
 

@@ -1,3 +1,7 @@
+'use client'
+
+import { useSound } from '@/lib/useSound'
+
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'gradient' | 'glass'
 }
@@ -6,8 +10,16 @@ export const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   className = '',
   children,
+  onClick,
   ...props
 }) => {
+  const { playClickSound } = useSound()
+
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    playClickSound()
+    onClick?.(e)
+  }
+
   const baseStyles = 'px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl'
   const variantStyles = {
     primary: 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white',
@@ -19,6 +31,7 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <button
       className={`cursor-pointer ${baseStyles} ${variantStyles[variant]} ${className} disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100`}
+      onClick={handleClick}
       {...props}
     >
       {children}

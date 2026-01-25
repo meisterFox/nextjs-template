@@ -23,4 +23,8 @@ export const routes: Route[] = [
     name: 'Profile',
     path: '/profile',
   },
+  {
+    name: 'Settings',
+    path: '/settings',
+  },
 ]
