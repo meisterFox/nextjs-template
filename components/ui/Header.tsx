@@ -27,7 +27,10 @@ export const Header: React.FC<HeaderProps> = ({
   const Tag = as
   const gradientClass = gradient ? 'text-gradient-purple' : 'text-white'
   return (
-    <Tag className={`${headerStyles[as]} ${gradientClass} ${className}`} {...props}>
+    <Tag
+      className={`${headerStyles[as]} ${gradientClass} ${className}`}
+      {...props}
+    >
       {children}
     </Tag>
   )

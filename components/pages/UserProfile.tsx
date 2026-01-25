@@ -41,18 +41,18 @@ export const UserProfile = ({ userId }: UserProfileProps) => {
 
   const fetchInitialData = async () => {
     setIsLoading(true)
-    
+
     // Use connected wallet address if available, otherwise use userId
-    const queryParams = connectedAddress 
+    const queryParams = connectedAddress
       ? { walletAddress: connectedAddress }
       : { userId }
-    
+
     const profileData = await getProfileDetails(queryParams)
     setProfile(profileData.data)
 
     const userGroupId =
       profileData.data?.[0]?.userMetadata?.[0]?.userGroupId ?? undefined
-    
+
     // Get the actual userId from profile if queried by wallet
     const profileUserId = profileData.data?.[0]?.id || userId
 
@@ -89,7 +89,8 @@ export const UserProfile = ({ userId }: UserProfileProps) => {
   const totalPoints = account?.[0]?.amount ? Number(account[0].amount) : 0
   const userResponse = profile?.[0]
   // Use connected wallet address (from Wagmi) as primary, fallback to profile data
-  const displayWalletAddress = connectedAddress || userResponse?.walletAddress || 'User'
+  const displayWalletAddress =
+    connectedAddress || userResponse?.walletAddress || 'User'
   const userMeta = userResponse?.userMetadata?.[0]
 
   // Get organization and website IDs from profile data or context
@@ -115,7 +116,7 @@ export const UserProfile = ({ userId }: UserProfileProps) => {
           reader.onload = () => resolve(reader.result as string)
           reader.readAsDataURL(formData.profileImage!)
         })
-        
+
         photoFile = {
           base64,
           name: formData.profileImage.name,
@@ -154,7 +155,7 @@ export const UserProfile = ({ userId }: UserProfileProps) => {
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-violet-600/20 via-fuchsia-500/20 to-cyan-500/20 rounded-full blur-[100px]"></div>
         </div>
-        
+
         <div className="inline-block animate-fadeIn">
           <span className="px-4 py-2 glass-card rounded-full text-sm text-violet-300 mb-4 inline-block">
             👤 Your Dashboard
@@ -167,7 +168,10 @@ export const UserProfile = ({ userId }: UserProfileProps) => {
         <div className="inline-flex items-center gap-3 px-6 py-4 glass-card rounded-2xl animate-fadeIn stagger-1">
           <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
           <span className="text-sm text-slate-400">Wallet: </span>
-          <span className="font-mono text-white">{displayWalletAddress.slice(0, 10)}...{displayWalletAddress.slice(-6)}</span>
+          <span className="font-mono text-white">
+            {displayWalletAddress.slice(0, 10)}...
+            {displayWalletAddress.slice(-6)}
+          </span>
         </div>
       </div>
 
@@ -202,22 +206,30 @@ export const UserProfile = ({ userId }: UserProfileProps) => {
           <div className="flex-1 space-y-4">
             {userMeta?.displayName && (
               <div className="glass rounded-xl p-4">
-                <p className="text-xs text-slate-400 mb-1 uppercase tracking-wider">Display Name</p>
-                <p className="text-2xl font-bold text-white">{userMeta.displayName}</p>
+                <p className="text-xs text-slate-400 mb-1 uppercase tracking-wider">
+                  Display Name
+                </p>
+                <p className="text-2xl font-bold text-white">
+                  {userMeta.displayName}
+                </p>
               </div>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {userMeta?.location && (
                 <div className="glass rounded-xl p-4">
-                  <p className="text-xs text-slate-400 mb-1 uppercase tracking-wider">📍 Location</p>
+                  <p className="text-xs text-slate-400 mb-1 uppercase tracking-wider">
+                    📍 Location
+                  </p>
                   <p className="text-lg text-white">{userMeta.location}</p>
                 </div>
               )}
 
               {userMeta?.portfolioUrl && (
                 <div className="glass rounded-xl p-4">
-                  <p className="text-xs text-slate-400 mb-1 uppercase tracking-wider">🎨 Portfolio</p>
+                  <p className="text-xs text-slate-400 mb-1 uppercase tracking-wider">
+                    🎨 Portfolio
+                  </p>
                   <a
                     href={userMeta.portfolioUrl}
                     target="_blank"
@@ -232,16 +244,26 @@ export const UserProfile = ({ userId }: UserProfileProps) => {
 
             {userMeta?.bio && (
               <div className="glass rounded-xl p-4">
-                <p className="text-xs text-slate-400 mb-2 uppercase tracking-wider">📝 About</p>
-                <p className="text-white text-sm leading-relaxed">{userMeta.bio}</p>
+                <p className="text-xs text-slate-400 mb-2 uppercase tracking-wider">
+                  📝 About
+                </p>
+                <p className="text-white text-sm leading-relaxed">
+                  {userMeta.bio}
+                </p>
               </div>
             )}
 
-            {!userMeta?.displayName && !userMeta?.location && !userMeta?.portfolioUrl && !userMeta?.bio && (
-              <div className="glass rounded-xl p-6 text-center">
-                <p className="text-slate-400">No profile details yet. Click "Edit Profile" to add information.</p>
-              </div>
-            )}
+            {!userMeta?.displayName &&
+              !userMeta?.location &&
+              !userMeta?.portfolioUrl &&
+              !userMeta?.bio && (
+                <div className="glass rounded-xl p-6 text-center">
+                  <p className="text-slate-400">
+                    No profile details yet. Click "Edit Profile" to add
+                    information.
+                  </p>
+                </div>
+              )}
           </div>
         </div>
       </div>
@@ -269,8 +291,12 @@ export const UserProfile = ({ userId }: UserProfileProps) => {
               🏆
             </div>
             <div>
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Total Points</p>
-              <p className="text-3xl font-black text-gradient-rainbow">{totalPoints.toLocaleString()}</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wider">
+                Total Points
+              </p>
+              <p className="text-3xl font-black text-gradient-rainbow">
+                {totalPoints.toLocaleString()}
+              </p>
             </div>
           </div>
         </div>
@@ -282,9 +308,13 @@ export const UserProfile = ({ userId }: UserProfileProps) => {
               💎
             </div>
             <div>
-              <p className="text-xs text-slate-400 uppercase tracking-wider">{balanceData?.symbol || 'ETH'} Balance</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wider">
+                {balanceData?.symbol || 'ETH'} Balance
+              </p>
               <p className="text-2xl font-bold text-white">
-                {balanceData ? parseFloat(balanceData.formatted).toFixed(4) : '—'}
+                {balanceData
+                  ? parseFloat(balanceData.formatted).toFixed(4)
+                  : '—'}
               </p>
             </div>
           </div>
@@ -297,9 +327,18 @@ export const UserProfile = ({ userId }: UserProfileProps) => {
               🔗
             </div>
             <div>
-              <p className="text-xs text-slate-400 uppercase tracking-wider">Connected</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wider">
+                Connected
+              </p>
               <p className="text-2xl font-bold text-white">
-                {[userMeta?.twitterUser, userMeta?.discordUser, userMeta?.telegramUsername].filter(Boolean).length} Accounts
+                {
+                  [
+                    userMeta?.twitterUser,
+                    userMeta?.discordUser,
+                    userMeta?.telegramUsername,
+                  ].filter(Boolean).length
+                }{' '}
+                Accounts
               </p>
             </div>
           </div>
@@ -314,18 +353,24 @@ export const UserProfile = ({ userId }: UserProfileProps) => {
           </div>
           <h3 className="text-xl font-bold text-white">Connected Accounts</h3>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {userMeta?.twitterUser && (
             <div className="glass rounded-xl p-4 flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-sky-500/20 flex items-center justify-center">
-                <svg className="w-5 h-5 text-sky-400" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                <svg
+                  className="w-5 h-5 text-sky-400"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                 </svg>
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-slate-400">Twitter/X</p>
-                <p className="text-white font-semibold truncate">@{userMeta.twitterUser}</p>
+                <p className="text-white font-semibold truncate">
+                  @{userMeta.twitterUser}
+                </p>
               </div>
               <span className="text-emerald-400 text-xs">✓</span>
             </div>
@@ -334,13 +379,19 @@ export const UserProfile = ({ userId }: UserProfileProps) => {
           {userMeta?.discordUser && (
             <div className="glass rounded-xl p-4 flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center">
-                <svg className="w-5 h-5 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286z"/>
+                <svg
+                  className="w-5 h-5 text-indigo-400"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286z" />
                 </svg>
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-slate-400">Discord</p>
-                <p className="text-white font-semibold truncate">{userMeta.discordUser}</p>
+                <p className="text-white font-semibold truncate">
+                  {userMeta.discordUser}
+                </p>
               </div>
               <span className="text-emerald-400 text-xs">✓</span>
             </div>
@@ -353,17 +404,21 @@ export const UserProfile = ({ userId }: UserProfileProps) => {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-slate-400">Telegram</p>
-                <p className="text-white font-semibold truncate">@{userMeta.telegramUsername}</p>
+                <p className="text-white font-semibold truncate">
+                  @{userMeta.telegramUsername}
+                </p>
               </div>
               <span className="text-emerald-400 text-xs">✓</span>
             </div>
           )}
 
-          {!userMeta?.twitterUser && !userMeta?.discordUser && !userMeta?.telegramUsername && (
-            <div className="col-span-full glass rounded-xl p-6 text-center">
-              <p className="text-slate-400">No connected accounts yet</p>
-            </div>
-          )}
+          {!userMeta?.twitterUser &&
+            !userMeta?.discordUser &&
+            !userMeta?.telegramUsername && (
+              <div className="col-span-full glass rounded-xl p-6 text-center">
+                <p className="text-slate-400">No connected accounts yet</p>
+              </div>
+            )}
         </div>
       </div>
 
@@ -375,7 +430,7 @@ export const UserProfile = ({ userId }: UserProfileProps) => {
           </div>
           <h2 className="text-2xl font-bold text-white">Transaction History</h2>
         </div>
-        
+
         <Table<
           TransactionGetTransactionEntriesResponse.Data & {
             loyaltyTransaction?: {
@@ -391,11 +446,13 @@ export const UserProfile = ({ userId }: UserProfileProps) => {
               key: 'direction',
               label: 'Type',
               render: (i) => (
-                <span className={`px-3 py-1.5 rounded-lg font-semibold text-sm ${
-                  i.direction === 'credit' 
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
-                    : 'bg-red-500/20 text-red-400 border border-red-500/30'
-                }`}>
+                <span
+                  className={`px-3 py-1.5 rounded-lg font-semibold text-sm ${
+                    i.direction === 'credit'
+                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                      : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                  }`}
+                >
                   {i.direction === 'credit' ? '↑ Credit' : '↓ Debit'}
                 </span>
               ),
@@ -405,7 +462,8 @@ export const UserProfile = ({ userId }: UserProfileProps) => {
               label: 'Description',
               render: (i) => (
                 <span className="text-slate-300">
-                  {i?.loyaltyTransaction?.loyaltyRule?.name ?? (i.loyaltyTransaction?.description || 'Transaction')}
+                  {i?.loyaltyTransaction?.loyaltyRule?.name ??
+                    (i.loyaltyTransaction?.description || 'Transaction')}
                 </span>
               ),
             },
@@ -413,8 +471,11 @@ export const UserProfile = ({ userId }: UserProfileProps) => {
               key: 'amount',
               label: 'Amount',
               render: (i) => (
-                <span className={`font-bold ${i.direction === 'credit' ? 'text-emerald-400' : 'text-red-400'}`}>
-                  {i.direction === 'credit' ? '+' : '-'}{Number(i.amount || 0).toLocaleString()}
+                <span
+                  className={`font-bold ${i.direction === 'credit' ? 'text-emerald-400' : 'text-red-400'}`}
+                >
+                  {i.direction === 'credit' ? '+' : '-'}
+                  {Number(i.amount || 0).toLocaleString()}
                 </span>
               ),
             },

@@ -47,7 +47,6 @@ export const Minting = () => {
     {}
   )
 
-
   useEffect(() => {
     const fetchContracts = async () => {
       setIsLoading(true)
@@ -167,7 +166,8 @@ export const Minting = () => {
         currency: currency,
         validityStartTimestamp:
           toBigInt(payload.validityStartTimestamp) ?? BigInt(0),
-        validityEndTimestamp: toBigInt(payload.validityEndTimestamp) ?? BigInt(0),
+        validityEndTimestamp:
+          toBigInt(payload.validityEndTimestamp) ?? BigInt(0),
         uid: payload.uid,
       }
 
@@ -183,7 +183,8 @@ export const Minting = () => {
         currency: currency,
         validityStartTimestamp:
           toBigInt(payload.validityStartTimestamp) ?? BigInt(0),
-        validityEndTimestamp: toBigInt(payload.validityEndTimestamp) ?? BigInt(0),
+        validityEndTimestamp:
+          toBigInt(payload.validityEndTimestamp) ?? BigInt(0),
         uid: payload.uid,
       }
 
@@ -243,7 +244,7 @@ export const Minting = () => {
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-emerald-500/20 via-cyan-500/20 to-violet-500/20 rounded-full blur-[100px]"></div>
         </div>
-        
+
         <div className="inline-block animate-fadeIn">
           <span className="px-4 py-2 glass-card rounded-full text-sm text-cyan-300 mb-4 inline-block">
             ✨ Exclusive Digital Assets
@@ -272,9 +273,12 @@ export const Minting = () => {
         <div className="w-full flex items-center justify-center min-h-[400px]">
           <div className="text-center space-y-4 glass-card rounded-3xl p-12">
             <div className="text-6xl mb-4">🎨</div>
-            <h3 className="text-2xl font-bold text-white">No Contracts Available</h3>
+            <h3 className="text-2xl font-bold text-white">
+              No Contracts Available
+            </h3>
             <p className="text-slate-400 max-w-md">
-              There are currently no minting contracts available. Check back soon!
+              There are currently no minting contracts available. Check back
+              soon!
             </p>
           </div>
         </div>
@@ -300,22 +304,34 @@ export const Minting = () => {
                       🖼️
                     </div>
                     <div className="flex flex-col gap-1">
-                      <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors">{contract.name}</h3>
+                      <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors">
+                        {contract.name}
+                      </h3>
                       <p className="text-sm text-slate-500 font-mono">
-                        {contract.network} • {contract.address.slice(0, 8)}...{contract.address.slice(-6)}
+                        {contract.network} • {contract.address.slice(0, 8)}...
+                        {contract.address.slice(-6)}
                       </p>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <div className="px-4 py-2 glass rounded-xl border border-cyan-500/30">
-                      <span className="text-cyan-400 font-bold">{contract._count.mintingContractAssets}</span>
+                      <span className="text-cyan-400 font-bold">
+                        {contract._count.mintingContractAssets}
+                      </span>
                       <span className="text-slate-400 ml-1">assets</span>
                     </div>
                     <div className="flex gap-2 text-xs">
                       <span className="px-2 py-1 glass rounded-lg">
-                        {contract.tokenType === 'erc721' || contract.tokenType === 'erc721c' ? 'ERC-721' : contract.tokenType === 'erc1155' ? 'ERC-1155' : contract.tokenType}
+                        {contract.tokenType === 'erc721' ||
+                        contract.tokenType === 'erc721c'
+                          ? 'ERC-721'
+                          : contract.tokenType === 'erc1155'
+                            ? 'ERC-1155'
+                            : contract.tokenType}
                       </span>
-                      <span className={`px-2 py-1 rounded-lg ${contract.isListed ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+                      <span
+                        className={`px-2 py-1 rounded-lg ${contract.isListed ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}
+                      >
                         {contract.isListed ? '✓ Listed' : '✕ Unlisted'}
                       </span>
                     </div>
@@ -338,7 +354,9 @@ export const Minting = () => {
                   ) : assets.length === 0 ? (
                     <div className="text-center py-8 glass rounded-xl">
                       <div className="text-4xl mb-2">📭</div>
-                      <p className="text-slate-400">No listed assets found in this contract.</p>
+                      <p className="text-slate-400">
+                        No listed assets found in this contract.
+                      </p>
                     </div>
                   ) : (
                     <div className="flex flex-col gap-4 mt-4">
@@ -346,7 +364,9 @@ export const Minting = () => {
                         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center text-lg">
                           💎
                         </div>
-                        <h4 className="text-lg font-bold text-white">Available Assets</h4>
+                        <h4 className="text-lg font-bold text-white">
+                          Available Assets
+                        </h4>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {assets.map((asset: any) => (
@@ -356,23 +376,36 @@ export const Minting = () => {
                           >
                             <div className="flex flex-col gap-4">
                               <div>
-                                <h5 className="text-lg font-bold text-white group-hover/card:text-cyan-300 transition-colors">{asset?.name || 'Untitled NFT'}</h5>
-                                <p className="text-xs text-slate-500 font-mono truncate">{asset?.id?.slice(0, 16)}...</p>
+                                <h5 className="text-lg font-bold text-white group-hover/card:text-cyan-300 transition-colors">
+                                  {asset?.name || 'Untitled NFT'}
+                                </h5>
+                                <p className="text-xs text-slate-500 font-mono truncate">
+                                  {asset?.id?.slice(0, 16)}...
+                                </p>
                               </div>
-                              
+
                               <div className="flex flex-wrap gap-2">
                                 <div className="px-3 py-1.5 bg-violet-500/20 border border-violet-500/30 rounded-lg text-sm text-violet-300">
-                                  {Number(asset?.quantityMinted || 0)}/{Number(asset?.quantity || 0)} minted
+                                  {Number(asset?.quantityMinted || 0)}/
+                                  {Number(asset?.quantity || 0)} minted
                                 </div>
                                 <div className="px-3 py-1.5 bg-emerald-500/20 border border-emerald-500/30 rounded-lg text-sm text-emerald-300 font-semibold">
                                   {(() => {
                                     const rawPrice = asset?.price
-                                    const currencyLabel = asset?.loyaltyCurrency?.symbol || asset?.loyaltyCurrency?.name || (asset?.currencyAddress ? 'Token' : 'ETH')
+                                    const currencyLabel =
+                                      asset?.loyaltyCurrency?.symbol ||
+                                      asset?.loyaltyCurrency?.name ||
+                                      (asset?.currencyAddress ? 'Token' : 'ETH')
                                     if (!rawPrice || Number(rawPrice) === 0) {
                                       return `FREE`
                                     }
-                                    const decimals = typeof asset?.currencyDecimals === 'number' ? asset.currencyDecimals : 0
-                                    const priceNumber = Number(rawPrice) / 10 ** decimals
+                                    const decimals =
+                                      typeof asset?.currencyDecimals ===
+                                      'number'
+                                        ? asset.currencyDecimals
+                                        : 0
+                                    const priceNumber =
+                                      Number(rawPrice) / 10 ** decimals
                                     return `${priceNumber} ${currencyLabel}`
                                   })()}
                                 </div>

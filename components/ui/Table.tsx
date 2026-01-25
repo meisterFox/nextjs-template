@@ -30,7 +30,10 @@ export function Table<T>({
           <thead>
             <tr className="bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 border-b border-white/10">
               {columns.map((col) => (
-                <th key={`thead_${col.key as string}`} className="text-left p-5 font-bold text-violet-300 uppercase text-xs tracking-wider">
+                <th
+                  key={`thead_${col.key as string}`}
+                  className="text-left p-5 font-bold text-violet-300 uppercase text-xs tracking-wider"
+                >
                   {col.label}
                 </th>
               ))}
@@ -83,7 +86,7 @@ export function Table<T>({
           ) : null}
         </table>
       </div>
-      
+
       {/* Empty State */}
       {data.length === 0 && (
         <div className="p-12 text-center">

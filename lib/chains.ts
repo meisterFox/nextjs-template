@@ -43,7 +43,10 @@ export const ViemChainByChainId: { [key in SupportedChainId]: Chain } = {
  * You can extend this function to add more chains as needed.
  */
 export const getAllSupportedChains = () => {
-  return [mainnet, base, arbitrum, optimism, polygon] as readonly [Chain, ...Chain[]]
+  return [mainnet, base, arbitrum, optimism, polygon] as readonly [
+    Chain,
+    ...Chain[],
+  ]
 }
 
 type NetworkKey =

@@ -15,7 +15,7 @@ const getMedalEmoji = (rank: number) => {
   return `#${rank}`
 }
 
-export const Leaderboard = ({}: LeaderboardProps) => {
+export const Leaderboard = (_props: LeaderboardProps) => {
   const [data, setData] = useState<Array<AccountListResponse.Data>>([])
   const [hasNextPage, setHasNextPage] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
@@ -54,7 +54,7 @@ export const Leaderboard = ({}: LeaderboardProps) => {
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-fuchsia-500/20 rounded-full blur-[100px]"></div>
         </div>
-        
+
         <div className="inline-block animate-fadeIn">
           <span className="px-4 py-2 glass-card rounded-full text-sm text-amber-300 mb-4 inline-block">
             🏆 Top Performers
@@ -88,11 +88,21 @@ export const Leaderboard = ({}: LeaderboardProps) => {
                 <div className="glass-card rounded-3xl p-6 relative overflow-hidden h-full">
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-slate-400 to-slate-600"></div>
                   <div className="flex flex-col items-center space-y-4 pt-2">
-                    <div className="text-6xl animate-float" style={{ animationDelay: '0.2s' }}>🥈</div>
-                    <div className="text-2xl font-bold text-slate-300">2nd Place</div>
+                    <div
+                      className="text-6xl animate-float"
+                      style={{ animationDelay: '0.2s' }}
+                    >
+                      🥈
+                    </div>
+                    <div className="text-2xl font-bold text-slate-300">
+                      2nd Place
+                    </div>
                     <div className="w-full glass rounded-xl p-4 text-center">
                       <div className="text-xs text-slate-400 mb-2">Wallet</div>
-                      <div className="font-mono text-sm text-white truncate">{data[1]?.user?.walletAddress?.slice(0, 10)}...{data[1]?.user?.walletAddress?.slice(-6)}</div>
+                      <div className="font-mono text-sm text-white truncate">
+                        {data[1]?.user?.walletAddress?.slice(0, 10)}...
+                        {data[1]?.user?.walletAddress?.slice(-6)}
+                      </div>
                     </div>
                     <div className="text-3xl font-black text-gradient-purple">
                       {Number(data[1]?.amount || 0).toLocaleString()} pts
@@ -108,10 +118,15 @@ export const Leaderboard = ({}: LeaderboardProps) => {
                   <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-orange-500/10"></div>
                   <div className="relative flex flex-col items-center space-y-4 pt-2">
                     <div className="text-7xl animate-float">👑</div>
-                    <div className="text-3xl font-black text-gradient-rainbow">Champion</div>
+                    <div className="text-3xl font-black text-gradient-rainbow">
+                      Champion
+                    </div>
                     <div className="w-full glass rounded-xl p-4 text-center border border-amber-500/30">
                       <div className="text-xs text-amber-400 mb-2">Wallet</div>
-                      <div className="font-mono text-sm font-bold text-white truncate">{data[0]?.user?.walletAddress?.slice(0, 10)}...{data[0]?.user?.walletAddress?.slice(-6)}</div>
+                      <div className="font-mono text-sm font-bold text-white truncate">
+                        {data[0]?.user?.walletAddress?.slice(0, 10)}...
+                        {data[0]?.user?.walletAddress?.slice(-6)}
+                      </div>
                     </div>
                     <div className="text-4xl font-black text-gradient-rainbow">
                       {Number(data[0]?.amount || 0).toLocaleString()} pts
@@ -125,11 +140,21 @@ export const Leaderboard = ({}: LeaderboardProps) => {
                 <div className="glass-card rounded-3xl p-6 relative overflow-hidden h-full">
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-500 to-amber-600"></div>
                   <div className="flex flex-col items-center space-y-4 pt-2">
-                    <div className="text-6xl animate-float" style={{ animationDelay: '0.4s' }}>🥉</div>
-                    <div className="text-2xl font-bold text-orange-300">3rd Place</div>
+                    <div
+                      className="text-6xl animate-float"
+                      style={{ animationDelay: '0.4s' }}
+                    >
+                      🥉
+                    </div>
+                    <div className="text-2xl font-bold text-orange-300">
+                      3rd Place
+                    </div>
                     <div className="w-full glass rounded-xl p-4 text-center">
                       <div className="text-xs text-orange-400 mb-2">Wallet</div>
-                      <div className="font-mono text-sm text-white truncate">{data[2]?.user?.walletAddress?.slice(0, 10)}...{data[2]?.user?.walletAddress?.slice(-6)}</div>
+                      <div className="font-mono text-sm text-white truncate">
+                        {data[2]?.user?.walletAddress?.slice(0, 10)}...
+                        {data[2]?.user?.walletAddress?.slice(-6)}
+                      </div>
                     </div>
                     <div className="text-3xl font-black text-gradient-purple">
                       {Number(data[2]?.amount || 0).toLocaleString()} pts
@@ -148,23 +173,31 @@ export const Leaderboard = ({}: LeaderboardProps) => {
               </div>
               <h2 className="text-2xl font-bold text-white">All Rankings</h2>
             </div>
-            
+
             <div className="glass-card rounded-2xl overflow-hidden">
               <Table<AccountListResponse.Data>
                 data={data}
                 getRowKey={(i) => i.id}
                 columns={[
-                  { key: 'id', label: 'Rank', render: (_i, idx) => (
-                    <span className={`font-bold ${idx < 3 ? 'text-2xl' : 'text-slate-400'}`}>
-                      {getMedalEmoji(idx + 1)}
-                    </span>
-                  )},
+                  {
+                    key: 'id',
+                    label: 'Rank',
+                    render: (_i, idx) => (
+                      <span
+                        className={`font-bold ${idx < 3 ? 'text-2xl' : 'text-slate-400'}`}
+                      >
+                        {getMedalEmoji(idx + 1)}
+                      </span>
+                    ),
+                  },
                   {
                     key: 'user',
                     label: 'Wallet Address',
                     render: (i) => (
                       <span className="font-mono text-sm text-slate-300">
-                        {i.user?.walletAddress ? `${i.user.walletAddress.slice(0, 10)}...${i.user.walletAddress.slice(-6)}` : '—'}
+                        {i.user?.walletAddress
+                          ? `${i.user.walletAddress.slice(0, 10)}...${i.user.walletAddress.slice(-6)}`
+                          : '—'}
                       </span>
                     ),
                   },
@@ -180,7 +213,7 @@ export const Leaderboard = ({}: LeaderboardProps) => {
                 ]}
               />
             </div>
-            
+
             {hasNextPage && (
               <div className="flex justify-center mt-6">
                 <button

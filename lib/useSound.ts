@@ -43,7 +43,7 @@ export const useSound = () => {
           tryPlay('wav')
         }
       }
-      audio.play().catch(e => console.log('Audio play failed:', e))
+      audio.play().catch((e) => console.log('Audio play failed:', e))
     }
 
     try {

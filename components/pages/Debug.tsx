@@ -13,7 +13,9 @@ import { getProfileDetails } from '@/lib/actions/getProfileDetails'
 export const DebugPage = () => {
   const { website } = useWebsiteContext()
   const { userId, isAuthenticated } = useAuthAccount()
-  const [activeTab, setActiveTab] = useState<'website' | 'leaderboard' | 'rules' | 'minting' | 'profile'>('website')
+  const [activeTab, setActiveTab] = useState<
+    'website' | 'leaderboard' | 'rules' | 'minting' | 'profile'
+  >('website')
   const [data, setData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -73,7 +75,9 @@ export const DebugPage = () => {
 
       {/* Tab Navigation */}
       <div className="flex flex-wrap gap-3 justify-center">
-        {(['website', 'leaderboard', 'rules', 'minting', 'profile'] as const).map((tab) => (
+        {(
+          ['website', 'leaderboard', 'rules', 'minting', 'profile'] as const
+        ).map((tab) => (
           <button
             key={tab}
             onClick={() => loadData(tab)}
@@ -91,12 +95,14 @@ export const DebugPage = () => {
       {/* Data Display */}
       <div className="w-full bg-gradient-to-br from-gray-800/30 to-gray-900/30 backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50">
         <div className="flex items-center justify-between mb-4">
-          <Header as="h3">{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Data</Header>
+          <Header as="h3">
+            {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Data
+          </Header>
           {isLoading && (
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
           )}
         </div>
-        
+
         {data ? (
           <Code data={data} />
         ) : (
@@ -108,8 +114,13 @@ export const DebugPage = () => {
 
       {/* Info */}
       <div className="text-center text-sm text-gray-500 space-y-2">
-        <p>🔒 This page should be removed or protected before deploying to production</p>
-        <p>Access: <code className="bg-gray-800 px-2 py-1 rounded">/debug</code></p>
+        <p>
+          🔒 This page should be removed or protected before deploying to
+          production
+        </p>
+        <p>
+          Access: <code className="bg-gray-800 px-2 py-1 rounded">/debug</code>
+        </p>
       </div>
     </div>
   )

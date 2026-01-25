@@ -1,75 +1,97 @@
-'use client';
+'use client'
 
-import React, { useState, useRef } from 'react';
-import { useAuthAccount } from '@/lib/useAuthAccount';
+import React, { useState, useRef } from 'react'
+import { useAuthAccount } from '@/lib/useAuthAccount'
 
 interface EditProfileProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen: boolean
+  onClose: () => void
   currentProfile?: {
-    displayName?: string;
-    location?: string;
-    portfolioUrl?: string;
-    about?: string;
-    profileImage?: string;
-  };
-  onSave?: (profileData: ProfileFormData) => Promise<void>;
+    displayName?: string
+    location?: string
+    portfolioUrl?: string
+    about?: string
+    profileImage?: string
+  }
+  onSave?: (profileData: ProfileFormData) => Promise<void>
 }
 
 export interface ProfileFormData {
-  displayName: string;
-  location: string;
-  portfolioUrl: string;
-  about: string;
-  profileImage?: File | null;
+  displayName: string
+  location: string
+  portfolioUrl: string
+  about: string
+  profileImage?: File | null
 }
 
-export default function EditProfile({ isOpen, onClose, currentProfile, onSave }: EditProfileProps) {
-  const [displayName, setDisplayName] = useState(currentProfile?.displayName || '');
-  const [location, setLocation] = useState(currentProfile?.location || '');
-  const [portfolioUrl, setPortfolioUrl] = useState(currentProfile?.portfolioUrl || '');
-  const [about, setAbout] = useState(currentProfile?.about || '');
-  const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [previewImage, setPreviewImage] = useState<string>(currentProfile?.profileImage || '');
-  const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState('');
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const { isAuthenticated } = useAuthAccount();
+export default function EditProfile({
+  isOpen,
+  onClose,
+  currentProfile,
+  onSave,
+}: EditProfileProps) {
+  const [displayName, setDisplayName] = useState(
+    currentProfile?.displayName || ''
+  )
+  const [location, setLocation] = useState(currentProfile?.location || '')
+  const [portfolioUrl, setPortfolioUrl] = useState(
+    currentProfile?.portfolioUrl || ''
+  )
+  const [about, setAbout] = useState(currentProfile?.about || '')
+  const [profileImage, setProfileImage] = useState<File | null>(null)
+  const [previewImage, setPreviewImage] = useState<string>(
+    currentProfile?.profileImage || ''
+  )
+  const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState('')
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const { isAuthenticated } = useAuthAccount()
 
-  if (!isOpen || !isAuthenticated) return null;
+  if (!isOpen || !isAuthenticated) return null
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0]
     if (file) {
       // Check file size (1MB max for images)
-      const maxSize = 1024 * 1024; // 1MB
+      const maxSize = 1024 * 1024 // 1MB
       if (file.size > maxSize) {
-        setError(`Image size must be less than 1MB. Current size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
-        return;
+        setError(
+          `Image size must be less than 1MB. Current size: ${(file.size / 1024 / 1024).toFixed(2)}MB`
+        )
+        return
       }
 
       // Check file type - support common image formats
-      const supportedFormats = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif', 'image/svg+xml'];
+      const supportedFormats = [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+        'image/avif',
+        'image/svg+xml',
+      ]
       if (!supportedFormats.includes(file.type)) {
-        setError(`Image format not supported. Supported: JPEG, PNG, GIF, WebP, AVIF`);
-        return;
+        setError(
+          `Image format not supported. Supported: JPEG, PNG, GIF, WebP, AVIF`
+        )
+        return
       }
 
-      setError('');
-      setProfileImage(file);
+      setError('')
+      setProfileImage(file)
       // Create preview
-      const reader = new FileReader();
+      const reader = new FileReader()
       reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+        setPreviewImage(reader.result as string)
+      }
+      reader.readAsDataURL(file)
     }
-  };
+  }
 
   const handleSave = async () => {
     try {
-      setError('');
-      setIsSaving(true);
+      setError('')
+      setIsSaving(true)
 
       const formData: ProfileFormData = {
         displayName,
@@ -77,30 +99,30 @@ export default function EditProfile({ isOpen, onClose, currentProfile, onSave }:
         portfolioUrl,
         about,
         profileImage,
-      };
-
-      if (onSave) {
-        await onSave(formData);
       }
 
-      onClose();
+      if (onSave) {
+        await onSave(formData)
+      }
+
+      onClose()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save profile');
+      setError(err instanceof Error ? err.message : 'Failed to save profile')
     } finally {
-      setIsSaving(false);
+      setIsSaving(false)
     }
-  };
+  }
 
   const handleClose = () => {
-    setDisplayName(currentProfile?.displayName || '');
-    setLocation(currentProfile?.location || '');
-    setPortfolioUrl(currentProfile?.portfolioUrl || '');
-    setAbout(currentProfile?.about || '');
-    setProfileImage(null);
-    setPreviewImage(currentProfile?.profileImage || '');
-    setError('');
-    onClose();
-  };
+    setDisplayName(currentProfile?.displayName || '')
+    setLocation(currentProfile?.location || '')
+    setPortfolioUrl(currentProfile?.portfolioUrl || '')
+    setAbout(currentProfile?.about || '')
+    setProfileImage(null)
+    setPreviewImage(currentProfile?.profileImage || '')
+    setError('')
+    onClose()
+  }
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
@@ -141,7 +163,9 @@ export default function EditProfile({ isOpen, onClose, currentProfile, onSave }:
                 ) : (
                   <div className="text-center">
                     <div className="text-3xl mb-1">📸</div>
-                    <div className="text-xs text-slate-400">Click to upload</div>
+                    <div className="text-xs text-slate-400">
+                      Click to upload
+                    </div>
                   </div>
                 )}
                 <input
@@ -152,7 +176,11 @@ export default function EditProfile({ isOpen, onClose, currentProfile, onSave }:
                   className="hidden"
                 />
               </div>
-              <p className="text-xs text-slate-400 text-center">Profile Photo<br />(Max 1MB)</p>
+              <p className="text-xs text-slate-400 text-center">
+                Profile Photo
+                <br />
+                (Max 1MB)
+              </p>
             </div>
 
             {/* Form Fields Section */}
@@ -246,5 +274,5 @@ export default function EditProfile({ isOpen, onClose, currentProfile, onSave }:
         </div>
       </div>
     </div>
-  );
+  )
 }

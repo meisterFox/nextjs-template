@@ -17,16 +17,16 @@ export const Navigation = () => {
           <Link href="/" className="group flex items-center gap-3">
             <div className="relative">
               <div className="absolute -inset-2 bg-gradient-to-r from-violet-600 via-cyan-500 to-fuchsia-500 rounded-xl blur-lg opacity-0 group-hover:opacity-40 transition-all duration-500"></div>
-              <Image 
-                src="/logo.svg" 
-                alt="Logo" 
-                width={140} 
-                height={50} 
-                className="relative brightness-0 invert group-hover:scale-105 transition-transform duration-300" 
+              <Image
+                src="/logo.svg"
+                alt="Logo"
+                width={140}
+                height={50}
+                className="relative brightness-0 invert group-hover:scale-105 transition-transform duration-300"
               />
             </div>
           </Link>
-          
+
           {/* Navigation */}
           <nav className="flex flex-row gap-1 items-center justify-end">
             {routes.map((r) => {
@@ -35,9 +35,7 @@ export const Navigation = () => {
                 <Link
                   key={r.path}
                   className={`relative px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 overflow-hidden group ${
-                    isActive
-                      ? 'text-white'
-                      : 'text-gray-400 hover:text-white'
+                    isActive ? 'text-white' : 'text-gray-400 hover:text-white'
                   }`}
                   href={r.path}
                 >

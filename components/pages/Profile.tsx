@@ -22,13 +22,16 @@ export const Profile = () => {
             Connect your wallet to view your profile and track your progress
           </p>
         </div>
-        
+
         <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-3xl p-12 border border-gray-700/50 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300">
           <div className="flex flex-col items-center gap-6">
             <div className="text-7xl">{'🔐'}</div>
-            <h3 className="text-2xl font-bold text-white">Authentication Required</h3>
+            <h3 className="text-2xl font-bold text-white">
+              Authentication Required
+            </h3>
             <p className="text-gray-400 text-center max-w-md">
-              Sign in with your Ethereum wallet to access your personalized profile
+              Sign in with your Ethereum wallet to access your personalized
+              profile
             </p>
             <SignInWithEthereum />
           </div>

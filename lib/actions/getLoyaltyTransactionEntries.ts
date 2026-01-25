@@ -35,7 +35,10 @@ export async function getLoyaltyTransactionEntries(
 
     return response.data
   } catch (error) {
-    console.error((error as AxiosError<TransactionGetTransactionEntriesResponse>)?.response?.data)
+    console.error(
+      (error as AxiosError<TransactionGetTransactionEntriesResponse>)?.response
+        ?.data
+    )
     throw error
   }
 }

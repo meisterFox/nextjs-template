@@ -2,7 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { useAccount, useBalance, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi'
+import {
+  useAccount,
+  useBalance,
+  useSendTransaction,
+  useWaitForTransactionReceipt,
+} from 'wagmi'
 import { parseEther, formatEther } from 'viem'
 
 interface SendModalProps {
@@ -16,23 +21,26 @@ export default function SendModal({ isOpen, onClose }: SendModalProps) {
     address,
     query: { enabled: isConnected },
   })
-  
+
   const [recipient, setRecipient] = useState('')
   const [amount, setAmount] = useState('')
-  const [step, setStep] = useState<'form' | 'preview' | 'pending' | 'success' | 'error'>('form')
-  
-  const { 
-    sendTransaction, 
+  const [step, setStep] = useState<
+    'form' | 'preview' | 'pending' | 'success' | 'error'
+  >('form')
+
+  const {
+    sendTransaction,
     data: txHash,
     isPending,
     isError,
     error,
-    reset
+    reset,
   } = useSendTransaction()
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: txHash,
-  })
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash: txHash,
+    })
 
   useEffect(() => {
     if (isPending) setStep('pending')
@@ -79,10 +87,12 @@ export default function SendModal({ isOpen, onClose }: SendModalProps) {
 
   const modal = (
     <>
-      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[10000] animate-fadeIn" onClick={onClose} />
+      <div
+        className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[10000] animate-fadeIn"
+        onClick={onClose}
+      />
       <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
         <div className="glass rounded-3xl shadow-2xl max-w-md w-full border border-white/10 animate-scaleIn">
-          
           {/* Header */}
           <div className="flex justify-between items-center p-6 border-b border-white/10">
             <div className="flex items-center gap-3">
@@ -111,7 +121,9 @@ export default function SendModal({ isOpen, onClose }: SendModalProps) {
               <div className="space-y-4">
                 {/* Recipient */}
                 <div>
-                  <label className="text-sm text-slate-400 mb-2 block uppercase tracking-wider">Recipient Address</label>
+                  <label className="text-sm text-slate-400 mb-2 block uppercase tracking-wider">
+                    Recipient Address
+                  </label>
                   <input
                     type="text"
                     value={recipient}
@@ -120,13 +132,17 @@ export default function SendModal({ isOpen, onClose }: SendModalProps) {
                     className="w-full glass border border-white/10 rounded-xl px-4 py-3 text-white font-mono text-sm focus:outline-none focus:border-cyan-500/50 focus:neon-cyan transition-all"
                   />
                   {recipient && !isValidRecipient && (
-                    <p className="text-red-400 text-xs mt-1">Invalid address format</p>
+                    <p className="text-red-400 text-xs mt-1">
+                      Invalid address format
+                    </p>
                   )}
                 </div>
 
                 {/* Amount */}
                 <div>
-                  <label className="text-sm text-slate-400 mb-2 block uppercase tracking-wider">Amount</label>
+                  <label className="text-sm text-slate-400 mb-2 block uppercase tracking-wider">
+                    Amount
+                  </label>
                   <div className="relative">
                     <input
                       type="number"
@@ -151,7 +167,9 @@ export default function SendModal({ isOpen, onClose }: SendModalProps) {
                   </p>
                   {amount && !isValidAmount && (
                     <p className="text-red-400 text-xs mt-1">
-                      {amountNum > balance ? 'Insufficient balance' : 'Enter a valid amount'}
+                      {amountNum > balance
+                        ? 'Insufficient balance'
+                        : 'Enter a valid amount'}
                     </p>
                   )}
                 </div>
@@ -160,7 +178,9 @@ export default function SendModal({ isOpen, onClose }: SendModalProps) {
                 <div className="glass rounded-xl p-3">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-slate-400">Network</span>
-                    <span className="text-white font-medium">{chain?.name || 'Unknown'}</span>
+                    <span className="text-white font-medium">
+                      {chain?.name || 'Unknown'}
+                    </span>
                   </div>
                 </div>
 
@@ -181,15 +201,21 @@ export default function SendModal({ isOpen, onClose }: SendModalProps) {
                 <div className="glass-card rounded-xl p-4 space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-slate-400 text-sm">From</span>
-                    <span className="text-white font-mono text-sm">{address?.slice(0, 6)}...{address?.slice(-4)}</span>
+                    <span className="text-white font-mono text-sm">
+                      {address?.slice(0, 6)}...{address?.slice(-4)}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-slate-400 text-sm">To</span>
-                    <span className="text-white font-mono text-sm">{recipient.slice(0, 6)}...{recipient.slice(-4)}</span>
+                    <span className="text-white font-mono text-sm">
+                      {recipient.slice(0, 6)}...{recipient.slice(-4)}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-slate-400 text-sm">Amount</span>
-                    <span className="text-gradient-cyan font-bold">{amount} {symbol}</span>
+                    <span className="text-gradient-cyan font-bold">
+                      {amount} {symbol}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-slate-400 text-sm">Network</span>
@@ -221,10 +247,13 @@ export default function SendModal({ isOpen, onClose }: SendModalProps) {
                   ⏳
                 </div>
                 <p className="text-white text-lg mb-2 font-semibold">
-                  {isConfirming ? 'Confirming transaction...' : 'Please confirm in your wallet'}
+                  {isConfirming
+                    ? 'Confirming transaction...'
+                    : 'Please confirm in your wallet'}
                 </p>
                 <p className="text-slate-400 text-sm">
-                  Sending {amount} {symbol} to {recipient.slice(0, 6)}...{recipient.slice(-4)}
+                  Sending {amount} {symbol} to {recipient.slice(0, 6)}...
+                  {recipient.slice(-4)}
                 </p>
               </div>
             )}
@@ -235,9 +264,12 @@ export default function SendModal({ isOpen, onClose }: SendModalProps) {
                 <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-500 flex items-center justify-center text-4xl mx-auto mb-4 shadow-lg shadow-emerald-500/30 animate-scaleIn">
                   ✅
                 </div>
-                <p className="text-white text-xl mb-2 font-bold">Transaction Sent!</p>
+                <p className="text-white text-xl mb-2 font-bold">
+                  Transaction Sent!
+                </p>
                 <p className="text-slate-400 text-sm mb-4">
-                  {amount} {symbol} sent to {recipient.slice(0, 6)}...{recipient.slice(-4)}
+                  {amount} {symbol} sent to {recipient.slice(0, 6)}...
+                  {recipient.slice(-4)}
                 </p>
                 {txHash && (
                   <a
@@ -264,12 +296,17 @@ export default function SendModal({ isOpen, onClose }: SendModalProps) {
                 <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-red-500 to-rose-500 flex items-center justify-center text-4xl mx-auto mb-4 shadow-lg shadow-red-500/30 animate-scaleIn">
                   ❌
                 </div>
-                <p className="text-white text-xl mb-2 font-bold">Transaction Failed</p>
+                <p className="text-white text-xl mb-2 font-bold">
+                  Transaction Failed
+                </p>
                 <p className="text-red-400 text-sm mb-4">
                   {error?.message || 'Something went wrong'}
                 </p>
                 <button
-                  onClick={() => { reset(); setStep('form') }}
+                  onClick={() => {
+                    reset()
+                    setStep('form')
+                  }}
                   className="w-full py-3 glass hover:bg-white/10 rounded-xl text-white font-semibold transition-all"
                 >
                   Try Again

@@ -24,10 +24,11 @@ export default function NotFound() {
 
         {/* Title */}
         <h1 className="text-3xl font-bold text-white mb-2">Page Not Found</h1>
-        
+
         {/* Subtitle */}
         <p className="text-slate-400 mb-8 max-w-md">
-          Oops! The page you&apos;re looking for doesn&apos;t exist or has been moved.
+          Oops! The page you&apos;re looking for doesn&apos;t exist or has been
+          moved.
         </p>
 
         {/* Button */}

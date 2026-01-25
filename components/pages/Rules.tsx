@@ -305,10 +305,15 @@ export const Rules = () => {
         <h1 className="text-4xl font-bold text-white">No Rules Found</h1>
         <p className="text-slate-400 leading-relaxed">
           You need to configure your loyalty program first. Go to{' '}
-          <Link href="https://admin.snag-solutions.io" target="_blank" className="text-violet-400 hover:text-violet-300 underline">
+          <Link
+            href="https://admin.snag-solutions.io"
+            target="_blank"
+            className="text-violet-400 hover:text-violet-300 underline"
+          >
             Snag Admin
           </Link>{' '}
-          and create a loyalty currency, then run the script to create example rules.
+          and create a loyalty currency, then run the script to create example
+          rules.
         </p>
         <Code data={`pnpm create:rules`} />
       </div>
@@ -323,7 +328,7 @@ export const Rules = () => {
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-violet-600/20 via-fuchsia-500/20 to-orange-500/20 rounded-full blur-[100px]"></div>
         </div>
-        
+
         <div className="inline-block animate-fadeIn">
           <span className="px-4 py-2 glass-card rounded-full text-sm text-violet-300 mb-4 inline-block">
             🎯 Earn Rewards
@@ -347,7 +352,9 @@ export const Rules = () => {
                 ⚡
               </div>
               <div>
-                <p className="text-sm text-slate-400 uppercase tracking-wider">Your Total</p>
+                <p className="text-sm text-slate-400 uppercase tracking-wider">
+                  Your Total
+                </p>
                 <h3 className="text-2xl font-bold text-white">Multiplier</h3>
               </div>
             </div>
@@ -376,186 +383,199 @@ export const Rules = () => {
             <p className="text-slate-400">{rules.length} quests available</p>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 gap-6">
           {rules.map((rule, ruleIndex) => {
-          const transaction = latestRuleTransactions[rule.id]
-          const progress = rulesInProgress[rule.id]
-          const processingStatus = processingRules[rule.id]
+            const transaction = latestRuleTransactions[rule.id]
+            const progress = rulesInProgress[rule.id]
+            const processingStatus = processingRules[rule.id]
 
-          const loyaltyMultiplier = multipliers.find(
-            (m) => m.loyaltyRuleId === rule.id
-          )
+            const loyaltyMultiplier = multipliers.find(
+              (m) => m.loyaltyRuleId === rule.id
+            )
 
-          const completedAt =
-            transaction?.createdAt || loyaltyMultiplier?.createdAt
+            const completedAt =
+              transaction?.createdAt || loyaltyMultiplier?.createdAt
 
-          const ruleMetadata = rule?.metadata as
-            | RuleCreateResponse.Metadata
-            | undefined
+            const ruleMetadata = rule?.metadata as
+              | RuleCreateResponse.Metadata
+              | undefined
 
-          return (
-            <div
-              key={rule?.id}
-              className={`group glass-card card-hover rounded-2xl overflow-hidden stagger-${(ruleIndex % 5) + 1} ${completedAt ? 'border-emerald-500/30' : ''}`}
-            >
-              {/* Completed Badge */}
-              {completedAt && (
-                <div className="absolute top-4 right-4 z-10 bg-gradient-to-r from-emerald-500 to-cyan-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg shadow-emerald-500/30 flex items-center gap-2">
-                  ✓ Completed
-                </div>
-              )}
-
-              <div className="flex flex-col lg:flex-row gap-6 p-6">
-                {/* Rule Image */}
-                {rule?.mediaUrl && (
-                  <div className="flex-shrink-0 w-full lg:w-48 h-48 relative overflow-hidden rounded-xl glass group-hover:scale-105 transition-transform duration-500">
-                    <img
-                      src={rule?.mediaUrl}
-                      alt={rule?.name ?? ''}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            return (
+              <div
+                key={rule?.id}
+                className={`group glass-card card-hover rounded-2xl overflow-hidden stagger-${(ruleIndex % 5) + 1} ${completedAt ? 'border-emerald-500/30' : ''}`}
+              >
+                {/* Completed Badge */}
+                {completedAt && (
+                  <div className="absolute top-4 right-4 z-10 bg-gradient-to-r from-emerald-500 to-cyan-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg shadow-emerald-500/30 flex items-center gap-2">
+                    ✓ Completed
                   </div>
                 )}
 
-                {/* Rule Content */}
-                <div className="flex-1 flex flex-col gap-4">
-                  <div>
-                    <h3 className="text-2xl font-bold mb-2 text-white group-hover:text-violet-300 transition-colors">
-                      {rule?.name}
-                    </h3>
-                    <p className="text-slate-400 leading-relaxed">
-                      {rule?.description}
-                    </p>
-                  </div>
-
-                  {/* Status Indicators */}
-                  <div className="flex flex-wrap gap-3">
-                    {completedAt && (
-                      <div className="glass rounded-xl px-4 py-3 border border-emerald-500/30">
-                        <div className="text-sm text-emerald-400 font-semibold flex items-center gap-2">
-                          🎉 Completed: {new Date(completedAt).toLocaleDateString()}
-                        </div>
-                        {!!transaction && (
-                          <div className="text-xs text-emerald-300 mt-1">
-                            +{transaction.amount} points earned
-                          </div>
-                        )}
-                        {!!loyaltyMultiplier && (
-                          <div className="text-xs text-amber-300 mt-1 flex items-center gap-1">
-                            ⚡ {loyaltyMultiplier.multiplier}x multiplier
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {processingStatus && (
-                      <div className={`glass rounded-xl px-4 py-3 ${
-                        processingStatus.status === 'pending'
-                          ? 'border border-amber-500/30'
-                          : processingStatus.status === 'completed'
-                          ? 'border border-emerald-500/30'
-                          : 'border border-red-500/30'
-                      }`}>
-                        <div className={`text-sm font-semibold flex items-center gap-2 ${
-                          processingStatus.status === 'pending'
-                            ? 'text-amber-400'
-                            : processingStatus.status === 'completed'
-                            ? 'text-emerald-400'
-                            : 'text-red-400'
-                        }`}>
-                          {processingStatus.status === 'pending' && <>⏳ Processing...</>}
-                          {processingStatus.status === 'completed' && <>✓ Complete</>}
-                          {processingStatus.status === 'failed' && <>✕ Failed</>}
-                        </div>
-                        {processingStatus.message && (
-                          <div className="text-xs text-slate-400 mt-1">
-                            {processingStatus.message}
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {!!progress && (
-                      <div className="glass rounded-xl px-4 py-3 border border-cyan-500/30">
-                        <div className="text-sm text-cyan-400 font-semibold flex items-center gap-2">
-                          📊 Progress: {progress.progress}%
-                        </div>
-                        <div className="w-full h-1.5 bg-slate-700 rounded-full mt-2 overflow-hidden">
-                          <div 
-                            className="h-full bg-gradient-to-r from-cyan-500 to-violet-500 rounded-full transition-all duration-500"
-                            style={{ width: `${progress.progress}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Time Information */}
-                  <div className="flex flex-wrap gap-4 text-sm">
-                    {rule.startTime && (
-                      <span className="text-slate-500 flex items-center gap-1">
-                        🕐 Started: {new Date(rule.startTime).toLocaleDateString()}
-                      </span>
-                    )}
-                    {rule.endTime && (
-                      <span className="text-orange-400 font-semibold flex items-center gap-1 animate-pulse">
-                        ⏰ Expires: {new Date(rule.endTime).toLocaleDateString()}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex flex-col gap-3 justify-center items-end min-w-fit">
-                  {!!ruleMetadata?.cta?.href && (
-                    <a
-                      href={ruleMetadata?.cta?.href}
-                      target="_blank"
-                      className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-xl font-semibold shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all duration-300 hover:scale-105 flex items-center gap-2 whitespace-nowrap"
-                    >
-                      {ruleMetadata?.cta?.label ?? 'Learn More'} →
-                    </a>
+                <div className="flex flex-col lg:flex-row gap-6 p-6">
+                  {/* Rule Image */}
+                  {rule?.mediaUrl && (
+                    <div className="flex-shrink-0 w-full lg:w-48 h-48 relative overflow-hidden rounded-xl glass group-hover:scale-105 transition-transform duration-500">
+                      <img
+                        src={rule?.mediaUrl}
+                        alt={rule?.name ?? ''}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    </div>
                   )}
 
-                  {!!profile?.[0] && (
-                    <LoyaltyRuleAction
-                      user={profile?.[0]}
-                      rule={rule}
-                      latestTransaction={transaction}
-                      loyaltyMultiplier={loyaltyMultiplier}
-                      processingStatus={processingStatus}
-                      onClaim={({ message }) => {
-                        alert(message)
-                        checkProcessingStatus()
-                      }}
-                    />
-                  )}
+                  {/* Rule Content */}
+                  <div className="flex-1 flex flex-col gap-4">
+                    <div>
+                      <h3 className="text-2xl font-bold mb-2 text-white group-hover:text-violet-300 transition-colors">
+                        {rule?.name}
+                      </h3>
+                      <p className="text-slate-400 leading-relaxed">
+                        {rule?.description}
+                      </p>
+                    </div>
+
+                    {/* Status Indicators */}
+                    <div className="flex flex-wrap gap-3">
+                      {completedAt && (
+                        <div className="glass rounded-xl px-4 py-3 border border-emerald-500/30">
+                          <div className="text-sm text-emerald-400 font-semibold flex items-center gap-2">
+                            🎉 Completed:{' '}
+                            {new Date(completedAt).toLocaleDateString()}
+                          </div>
+                          {!!transaction && (
+                            <div className="text-xs text-emerald-300 mt-1">
+                              +{transaction.amount} points earned
+                            </div>
+                          )}
+                          {!!loyaltyMultiplier && (
+                            <div className="text-xs text-amber-300 mt-1 flex items-center gap-1">
+                              ⚡ {loyaltyMultiplier.multiplier}x multiplier
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {processingStatus && (
+                        <div
+                          className={`glass rounded-xl px-4 py-3 ${
+                            processingStatus.status === 'pending'
+                              ? 'border border-amber-500/30'
+                              : processingStatus.status === 'completed'
+                                ? 'border border-emerald-500/30'
+                                : 'border border-red-500/30'
+                          }`}
+                        >
+                          <div
+                            className={`text-sm font-semibold flex items-center gap-2 ${
+                              processingStatus.status === 'pending'
+                                ? 'text-amber-400'
+                                : processingStatus.status === 'completed'
+                                  ? 'text-emerald-400'
+                                  : 'text-red-400'
+                            }`}
+                          >
+                            {processingStatus.status === 'pending' && (
+                              <>⏳ Processing...</>
+                            )}
+                            {processingStatus.status === 'completed' && (
+                              <>✓ Complete</>
+                            )}
+                            {processingStatus.status === 'failed' && (
+                              <>✕ Failed</>
+                            )}
+                          </div>
+                          {processingStatus.message && (
+                            <div className="text-xs text-slate-400 mt-1">
+                              {processingStatus.message}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {!!progress && (
+                        <div className="glass rounded-xl px-4 py-3 border border-cyan-500/30">
+                          <div className="text-sm text-cyan-400 font-semibold flex items-center gap-2">
+                            📊 Progress: {progress.progress}%
+                          </div>
+                          <div className="w-full h-1.5 bg-slate-700 rounded-full mt-2 overflow-hidden">
+                            <div
+                              className="h-full bg-gradient-to-r from-cyan-500 to-violet-500 rounded-full transition-all duration-500"
+                              style={{ width: `${progress.progress}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Time Information */}
+                    <div className="flex flex-wrap gap-4 text-sm">
+                      {rule.startTime && (
+                        <span className="text-slate-500 flex items-center gap-1">
+                          🕐 Started:{' '}
+                          {new Date(rule.startTime).toLocaleDateString()}
+                        </span>
+                      )}
+                      {rule.endTime && (
+                        <span className="text-orange-400 font-semibold flex items-center gap-1 animate-pulse">
+                          ⏰ Expires:{' '}
+                          {new Date(rule.endTime).toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-col gap-3 justify-center items-end min-w-fit">
+                    {!!ruleMetadata?.cta?.href && (
+                      <a
+                        href={ruleMetadata?.cta?.href}
+                        target="_blank"
+                        className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-xl font-semibold shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all duration-300 hover:scale-105 flex items-center gap-2 whitespace-nowrap"
+                      >
+                        {ruleMetadata?.cta?.label ?? 'Learn More'} →
+                      </a>
+                    )}
+
+                    {!!profile?.[0] && (
+                      <LoyaltyRuleAction
+                        user={profile?.[0]}
+                        rule={rule}
+                        latestTransaction={transaction}
+                        loyaltyMultiplier={loyaltyMultiplier}
+                        processingStatus={processingStatus}
+                        onClaim={({ message }) => {
+                          alert(message)
+                          checkProcessingStatus()
+                        }}
+                      />
+                    )}
+                  </div>
                 </div>
               </div>
+            )
+          })}
+
+          {hasMore && (
+            <div className="w-full flex justify-center mt-10">
+              <button
+                onClick={() => loadRules(lastId || undefined)}
+                disabled={isLoading}
+                className="px-8 py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white rounded-xl font-bold shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                {isLoading ? (
+                  <span className="flex items-center gap-3">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    Loading...
+                  </span>
+                ) : (
+                  'Load More Quests →'
+                )}
+              </button>
             </div>
-          )
-        })}
-        
-        {hasMore && (
-          <div className="w-full flex justify-center mt-10">
-            <button
-              onClick={() => loadRules(lastId || undefined)}
-              disabled={isLoading}
-              className="px-8 py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white rounded-xl font-bold shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-            >
-              {isLoading ? (
-                <span className="flex items-center gap-3">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  Loading...
-                </span>
-              ) : (
-                'Load More Quests →'
-              )}
-            </button>
-          </div>
-        )}
+          )}
         </div>
       </div>
     </div>

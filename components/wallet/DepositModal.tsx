@@ -10,7 +10,12 @@ interface DepositModalProps {
   chainName?: string
 }
 
-export default function DepositModal({ isOpen, onClose, address, chainName }: DepositModalProps) {
+export default function DepositModal({
+  isOpen,
+  onClose,
+  address,
+  chainName,
+}: DepositModalProps) {
   const [copied, setCopied] = useState(false)
 
   if (!isOpen) return null
@@ -26,10 +31,12 @@ export default function DepositModal({ isOpen, onClose, address, chainName }: De
 
   const modal = (
     <>
-      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[10000] animate-fadeIn" onClick={onClose} />
+      <div
+        className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[10000] animate-fadeIn"
+        onClick={onClose}
+      />
       <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
         <div className="glass rounded-3xl shadow-2xl max-w-sm w-full border border-white/10 animate-scaleIn">
-          
           {/* Header */}
           <div className="flex justify-between items-center p-6 border-b border-white/10">
             <div className="flex items-center gap-3">
@@ -50,8 +57,8 @@ export default function DepositModal({ isOpen, onClose, address, chainName }: De
             {/* QR Code */}
             <div className="flex justify-center mb-6">
               <div className="bg-white p-4 rounded-2xl shadow-xl">
-                <img 
-                  src={qrCodeUrl} 
+                <img
+                  src={qrCodeUrl}
                   alt="Wallet QR Code"
                   className="w-48 h-48"
                 />
@@ -70,16 +77,20 @@ export default function DepositModal({ isOpen, onClose, address, chainName }: De
 
             {/* Address */}
             <div className="glass-card rounded-xl p-4">
-              <p className="text-xs text-slate-400 mb-2 uppercase tracking-wider">Your wallet address</p>
-              <p className="font-mono text-white text-sm break-all">{address}</p>
+              <p className="text-xs text-slate-400 mb-2 uppercase tracking-wider">
+                Your wallet address
+              </p>
+              <p className="font-mono text-white text-sm break-all">
+                {address}
+              </p>
             </div>
 
             {/* Copy Button */}
             <button
               onClick={handleCopy}
               className={`w-full mt-4 py-3 rounded-xl text-white font-semibold transition-all shadow-lg ${
-                copied 
-                  ? 'bg-gradient-to-r from-emerald-500 to-green-500 shadow-emerald-500/25' 
+                copied
+                  ? 'bg-gradient-to-r from-emerald-500 to-green-500 shadow-emerald-500/25'
                   : 'bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 shadow-violet-500/25'
               }`}
             >

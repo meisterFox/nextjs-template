@@ -67,7 +67,7 @@ export const Settings = () => {
           tryPlay('wav')
         }
       }
-      audio.play().catch(e => console.log('Audio play failed:', e))
+      audio.play().catch((e) => console.log('Audio play failed:', e))
     }
 
     tryPlay('mp3')
@@ -95,13 +95,19 @@ export const Settings = () => {
           {/* Sound Effects Toggle */}
           <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-xl border border-slate-700/30">
             <div>
-              <h3 className="text-xl font-semibold text-white mb-1">Sound Effects</h3>
-              <p className="text-sm text-slate-400">Play sounds on button clicks</p>
+              <h3 className="text-xl font-semibold text-white mb-1">
+                Sound Effects
+              </h3>
+              <p className="text-sm text-slate-400">
+                Play sounds on button clicks
+              </p>
             </div>
             <button
               onClick={handleSoundToggle}
               className={`relative w-16 h-8 rounded-full transition-colors ${
-                soundEnabled ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-slate-600'
+                soundEnabled
+                  ? 'bg-gradient-to-r from-green-500 to-emerald-500'
+                  : 'bg-slate-600'
               }`}
             >
               <div
@@ -115,13 +121,19 @@ export const Settings = () => {
           {/* Background Music Toggle */}
           <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-xl border border-slate-700/30">
             <div>
-              <h3 className="text-xl font-semibold text-white mb-1">Background Music</h3>
-              <p className="text-sm text-slate-400">Play ambient music while browsing</p>
+              <h3 className="text-xl font-semibold text-white mb-1">
+                Background Music
+              </h3>
+              <p className="text-sm text-slate-400">
+                Play ambient music while browsing
+              </p>
             </div>
             <button
               onClick={handleMusicToggle}
               className={`relative w-16 h-8 rounded-full transition-colors ${
-                musicEnabled ? 'bg-gradient-to-r from-purple-500 to-pink-500' : 'bg-slate-600'
+                musicEnabled
+                  ? 'bg-gradient-to-r from-purple-500 to-pink-500'
+                  : 'bg-slate-600'
               }`}
             >
               <div
@@ -145,13 +157,17 @@ export const Settings = () => {
                 onChange={(e) => handleVolumeChange(Number(e.target.value))}
                 className="flex-1 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gradient-to-r [&::-webkit-slider-thumb]:from-blue-500 [&::-webkit-slider-thumb]:to-purple-500"
               />
-              <span className="text-white font-bold w-12 text-right">{volume}%</span>
+              <span className="text-white font-bold w-12 text-right">
+                {volume}%
+              </span>
             </div>
           </div>
 
           {/* Sound Selection */}
           <div className="p-4 bg-slate-800/50 rounded-xl border border-slate-700/30">
-            <h3 className="text-xl font-semibold text-white mb-4">Click Sound</h3>
+            <h3 className="text-xl font-semibold text-white mb-4">
+              Click Sound
+            </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {['click1', 'click2', 'pop', 'beep', 'keyboard'].map((sound) => (
                 <button
@@ -164,7 +180,9 @@ export const Settings = () => {
                   }`}
                 >
                   <div className="text-2xl mb-1">🔊</div>
-                  <div className="text-sm font-semibold capitalize">{sound}</div>
+                  <div className="text-sm font-semibold capitalize">
+                    {sound}
+                  </div>
                 </button>
               ))}
             </div>
@@ -180,7 +198,9 @@ export const Settings = () => {
 
         <div className="space-y-4">
           <div className="p-4 bg-slate-800/50 rounded-xl border border-slate-700/30">
-            <p className="text-slate-400">More appearance options coming soon...</p>
+            <p className="text-slate-400">
+              More appearance options coming soon...
+            </p>
           </div>
         </div>
       </div>

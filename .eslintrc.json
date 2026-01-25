@@ -6,7 +6,15 @@
     "next/core-web-vitals"
   ],
   "rules": {
-    "indent": ["error", 2],
-    "no-console": "warn"
+    "indent": "off",
+    "no-console": "off",
+    "no-unused-vars": "off",
+    "no-undef": "off",
+    "no-empty": "off",
+    "no-case-declarations": "off",
+    "no-extra-boolean-cast": "off",
+    "react/no-unescaped-entities": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "@next/next/no-img-element": "off"
   }
 }

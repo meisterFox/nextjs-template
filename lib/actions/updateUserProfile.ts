@@ -1,37 +1,37 @@
-'use server';
+'use server'
 
-import { snag } from '@/lib/snag';
+import { snag } from '@/lib/snag'
 
 interface UpdateProfileParams {
-  userId: string;
-  websiteId: string;
-  organizationId: string;
-  displayName?: string;
-  location?: string;
-  portfolioUrl?: string;
-  about?: string;
+  userId: string
+  websiteId: string
+  organizationId: string
+  displayName?: string
+  location?: string
+  portfolioUrl?: string
+  about?: string
   photoFile?: {
-    base64: string;
-    name: string;
-    size: number;
-  };
+    base64: string
+    name: string
+    size: number
+  }
 }
 
 /**
  * Get MIME type from file extension
  */
 function getMimeType(fileName: string): string {
-  const ext = fileName.toLowerCase().split('.').pop() || '';
+  const ext = fileName.toLowerCase().split('.').pop() || ''
   const mimeTypes: Record<string, string> = {
-    'jpg': 'image/jpeg',
-    'jpeg': 'image/jpeg',
-    'png': 'image/png',
-    'gif': 'image/gif',
-    'webp': 'image/webp',
-    'avif': 'image/avif',
-    'svg': 'image/svg+xml',
-  };
-  return mimeTypes[ext] || 'image/jpeg';
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    png: 'image/png',
+    gif: 'image/gif',
+    webp: 'image/webp',
+    avif: 'image/avif',
+    svg: 'image/svg+xml',
+  }
+  return mimeTypes[ext] || 'image/jpeg'
 }
 
 /**
@@ -39,9 +39,9 @@ function getMimeType(fileName: string): string {
  */
 async function uploadProfilePhoto(
   photoFile: {
-    base64: string;
-    name: string;
-    size: number;
+    base64: string
+    name: string
+    size: number
   },
   organizationId: string,
   userId: string,
@@ -56,16 +56,18 @@ async function uploadProfilePhoto(
       organizationId,
       userId,
       websiteId,
-    });
+    })
 
     // Convert base64 to buffer
-    const base64Data = photoFile.base64.split(',')[1] || photoFile.base64;
-    const buffer = Buffer.from(base64Data, 'base64');
+    const base64Data = photoFile.base64.split(',')[1] || photoFile.base64
+    const buffer = Buffer.from(base64Data, 'base64')
 
     // Get correct MIME type for the file
-    const contentType = getMimeType(photoFile.name);
+    const contentType = getMimeType(photoFile.name)
 
-    console.log(`Uploading profile photo: ${photoFile.name} (${buffer.length} bytes, type: ${contentType})`);
+    console.log(
+      `Uploading profile photo: ${photoFile.name} (${buffer.length} bytes, type: ${contentType})`
+    )
 
     // Upload to signed URL
     const uploadResponse = await fetch(assetResponse.signedUrl, {
@@ -75,21 +77,25 @@ async function uploadProfilePhoto(
         'Content-Type': contentType,
         'Content-Length': buffer.length.toString(),
       },
-    });
+    })
 
     if (!uploadResponse.ok) {
-      const errorText = await uploadResponse.text();
-      console.error(`Upload failed (${uploadResponse.status}):`, errorText);
-      throw new Error(`Upload failed: ${uploadResponse.status} ${uploadResponse.statusText}`);
+      const errorText = await uploadResponse.text()
+      console.error(`Upload failed (${uploadResponse.status}):`, errorText)
+      throw new Error(
+        `Upload failed: ${uploadResponse.status} ${uploadResponse.statusText}`
+      )
     }
 
-    console.log('Profile photo uploaded successfully:', assetResponse.url);
+    console.log('Profile photo uploaded successfully:', assetResponse.url)
 
     // Return the public URL
-    return assetResponse.url;
+    return assetResponse.url
   } catch (error) {
-    console.error('Error uploading profile photo:', error);
-    throw new Error(`Failed to upload profile photo: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    console.error('Error uploading profile photo:', error)
+    throw new Error(
+      `Failed to upload profile photo: ${error instanceof Error ? error.message : 'Unknown error'}`
+    )
   }
 }
 
@@ -104,28 +110,28 @@ export async function updateUserProfile(params: UpdateProfileParams) {
       portfolioUrl,
       about,
       photoFile,
-    } = params;
+    } = params
 
     // Validate required parameters
     if (!userId) {
-      throw new Error('User ID is required');
+      throw new Error('User ID is required')
     }
     if (!websiteId) {
-      throw new Error('Website ID is required');
+      throw new Error('Website ID is required')
     }
     if (!organizationId) {
-      throw new Error('Organization ID is required');
+      throw new Error('Organization ID is required')
     }
 
     // Upload photo if provided
-    let logoUrl = '';
+    let logoUrl = ''
     if (photoFile) {
       logoUrl = await uploadProfilePhoto(
         photoFile,
         organizationId,
         userId,
         websiteId
-      );
+      )
     }
 
     // Build metadata object with available fields
@@ -133,29 +139,29 @@ export async function updateUserProfile(params: UpdateProfileParams) {
       userId,
       websiteId,
       organizationId,
-    };
+    }
 
     // Add optional fields only if provided
-    if (displayName) metadataPayload.displayName = displayName;
-    if (location) metadataPayload.location = location;
-    if (portfolioUrl) metadataPayload.portfolioUrl = portfolioUrl;
-    if (logoUrl) metadataPayload.logoUrl = logoUrl; // Use uploaded asset URL
+    if (displayName) metadataPayload.displayName = displayName
+    if (location) metadataPayload.location = location
+    if (portfolioUrl) metadataPayload.portfolioUrl = portfolioUrl
+    if (logoUrl) metadataPayload.logoUrl = logoUrl // Use uploaded asset URL
 
     // Add about to bio field
-    if (about) metadataPayload.bio = about;
+    if (about) metadataPayload.bio = about
 
-    console.log('Updating user metadata with:', metadataPayload);
+    console.log('Updating user metadata with:', metadataPayload)
 
     // Create/update user metadata
-    const response = await snag.users.metadatas.create(metadataPayload);
+    const response = await snag.users.metadatas.create(metadataPayload)
 
     return {
       success: true,
       data: response,
-    };
+    }
   } catch (error) {
-    console.error('Error updating user profile:', error);
-    throw error;
+    console.error('Error updating user profile:', error)
+    throw error
   }
 }
 
@@ -170,14 +176,14 @@ export async function getUserProfileMetadata(
     const response = await snag.users.metadatas.list({
       userId,
       websiteId,
-    });
+    })
 
     return {
       success: true,
       data: response,
-    };
+    }
   } catch (error) {
-    console.error('Error fetching user profile metadata:', error);
-    throw error;
+    console.error('Error fetching user profile metadata:', error)
+    throw error
   }
 }
