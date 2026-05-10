@@ -1,53 +1,34 @@
-import { Footer } from '@/components/layout/Footer'
-import { Navigation } from '@/components/layout/Navigation'
-import Providers from '@/components/providers/Providers'
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
-import { createPublicClient, http } from 'viem'
-import { mainnet } from 'viem/chains'
+import { Inter, Cormorant_Garamond } from 'next/font/google'
+import { AmbientSound } from '@/components/atmospheric/ambient-sound'
 import './globals.css'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans-loaded' })
+const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
-})
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+  weight: ['300', '400', '500', '600'],
+  variable: '--font-serif-loaded',
 })
 
 export const metadata: Metadata = {
-  title: 'Snag Solutions | Demo Template',
-  description: 'Web3 Loyalty Program Template Application from Snag Solutions',
+  title: 'Luminescence — meet souls before faces',
+  description:
+    'A blind dating app for people who are tired of swipes. Match by values, talk in the dark, and choose when — if ever — to light the candle.',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+  openGraph: {
+    title: 'Luminescence',
+    description:
+      'A blind dating app where minds meet before faces. Reveal yourself only when both candles are lit.',
+    type: 'website',
+  },
 }
 
-export default async function RootLayout({
-  children,
-  params,
-}: Readonly<{
-  children: React.ReactNode
-  params: any
-}>) {
-  await createPublicClient({
-    chain: mainnet,
-    transport: http(),
-  })
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Providers>
-          <div className="flex flex-col h-screen font-[family-name:var(--font-geist-sans)]">
-            <Navigation />
-            <main className="flex flex-1 flex-col gap-8 p-8 sm:p-16">
-              {children}
-            </main>
-            <Footer />
-          </div>
-        </Providers>
+    <html lang="en" className={`${inter.variable} ${cormorant.variable}`}>
+      <body className="antialiased">
+        <div className="relative z-10 min-h-screen flex flex-col">{children}</div>
+        <AmbientSound />
       </body>
     </html>
   )

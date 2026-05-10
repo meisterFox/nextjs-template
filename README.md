@@ -1,94 +1,150 @@
-# Snag Solutions Template App
+# Luminescence
 
-This repository contains a Next.js boilerplate with Tailwind CSS, designed to showcase a demo Web3 application. The demo illustrates how clients can utilize Snag SDK to quickly build a website featuring:
+> Meet the soul, before the face.
 
-- Web3 authentication
-- A loyalty program with a leaderboard
-- A profile page displaying user account details and loyalty points history
+Luminescence is a blind dating app for people who are tired of swipes and want
+to meet someone before knowing what they look like. There are no profile
+photos in the lounge, no name, no height — just a candle, a vibe title, and a
+slow conversation. Identity is revealed only when **both** parties light their
+candle.
 
-## Getting Started
+## The philosophy
 
-### Prerequisites
+> "Bütün date uygulamaları match olmak üzerine kurulu ama bu uygulama tam da
+> hiç fotoğraf paylaşmayan, efor sarf etmeyen ama hayatlarının aşkının gelip
+> kendilerini bulmalarını bekleyenler için. Loş ışıktaki bir masada iki taraf
+> da kendini görmeyecek şekilde bir tasarım — karşısındaki ile ilgili hiçbir
+> fiziksel özelliği kendi reveal etmedikçe göremeyecek."
 
-Ensure you have the following installed:
+## The progression
 
-- Node.js (latest LTS version recommended)
-- PNPM (latest version)
+| Phase | Trigger | What you see |
+|------|--------|-------------|
+| 🕯️ **Whisper** | start of every chat | Text only. No name, no age, no city — just a vibe title and a one-line bio. |
+| 👤 **Outline** | 50 messages exchanged | A blurred silhouette and the rough shape (height, body type) appear. |
+| 🔥 **Reveal** | both tap *Light the candle* | Full identity, photos, and locked details unfold — only between you two. |
 
-### Installation
+## Tech
 
-Clone the repository and install dependencies:
+- **Next.js 15** (App Router, React 19, Server Components)
+- **Tailwind CSS v4** with a hand-rolled candlelight theme
+- **Framer Motion** for the dimly-lit transitions and reveal blur
+- **shadcn-style** primitives built on **Radix UI**
+- **Supabase** — auth, Postgres, RLS, real-time chat, storage for locked photos
+- **lucide-react** icons
+- **zod** validation
 
-```sh
-pnpm install
-```
+No analytics, no trackers, no third-party chat — the entire stack runs on
+Supabase + Vercel.
 
-### Environment Variables
+## Setting it up
 
-To use the application, you must configure the required environment variables in a `.env` file:
+### 1 · Create a Supabase project
+
+1. Go to <https://app.supabase.com> and create a new project.
+2. **SQL Editor → New query** — paste the entire contents of
+   [`supabase/schema.sql`](supabase/schema.sql) and run it. This creates the
+   `profiles`, `matches`, `messages` tables, the `light_candle` and
+   `create_match` RPCs, RLS policies, and enables real-time on chat tables.
+3. **Authentication → Providers** — enable **Email**. (For dev, turn off email
+   confirmation under *Email Auth* so you can test without checking your inbox.)
+4. **Storage → New bucket** — create a *private* bucket called `locked-photos`.
+   This is where Soul-Sync stores photos that stay invisible until reveal.
+5. **Project Settings → API** — copy the project URL and the *anon* public key.
+
+### 2 · Configure env
+
+Copy `.env.example` to `.env.local` and fill in the Supabase values:
 
 ```env
-SNAG_API_KEY=your_api_key
-NEXT_PUBLIC_WEBSITE_ID=your_website_uuid
-NEXT_PUBLIC_ORGANIZATION_ID=your_organization_uuid
-LOYALTY_CURRENCY_ID=your_loyalty_currency_id
-ENABLE_TWITTER_RULES=boolean # Optional
-ENABLE_TELEGRAM_RULES=boolean # Optional
-RULES_COLLECTIONS='[{"address":"0x123","network":"mainnet"}]' # Optional
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=ey…
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-You can generate your key and copy UUIDs in the API KEYS tab on the admin dashboard.
+### 3 · Run
 
-### Running the Development Server
-
-Start the development server:
-
-```sh
-pnpm template:dev
+```bash
+npm install
+npm run dev
 ```
 
-The app will be available at [http://localhost:3000](http://localhost:3000)
+Open <http://localhost:3000>, reserve a table, and you'll be walked through
+**Soul-Sync** — the multi-step onboarding that captures your values, interests,
+personality, and the locked physical descriptors used by the matchmaker.
 
-## Setup Scripts
+## Deploying to Vercel
 
-The repository includes two scripts to help manage loyalty rules:
+1. Push this repo to GitHub.
+2. <https://vercel.com/new> — import the repo.
+3. Add the same `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and
+   `NEXT_PUBLIC_SITE_URL` (set to your production URL) under
+   *Environment Variables*.
+4. Deploy. Set up a custom domain and update `NEXT_PUBLIC_SITE_URL` accordingly.
 
-#### 1. Add Basic Rule Sets for Your Website
+That's it — there are no build flags or extra config to set.
 
-This script sets up an initial loyalty program with predefined rules. You'll need to create your loyalty currency.
+## How matchmaking works
 
-```sh
-pnpm rules:create
+The matchmaker (see [`lib/matchmaker.ts`](lib/matchmaker.ts)) is a pure
+heuristic. It computes:
+
+```
+score = 0.55 · jaccard(values)
+      + 0.30 · jaccard(interests)
+      + 0.15 · personality_affinity
 ```
 
-#### 2. Clear All Existing Rules
+Proximity, age, and physical attributes are **deliberately ignored** — the
+whole point of Luminescence is that you cannot see the person, so the matcher
+cannot weight what they look like.
 
-This script removes all loyalty rules associated with your website. Use this if you want to start clean with the rules set.
+## Project shape
 
-```sh
-pnpm rules:remove
+```
+app/
+  (auth)/login              email/password sign-in
+  (auth)/signup             create account → triggers onboarding
+  onboarding                multi-step Soul-Sync wizard
+  lounge                    The Dim Table — silhouettes + ranked candidates
+  lounge/chats              your tables, sorted by recency
+  lounge/profile            your own profile preview
+  chat/[matchId]            ChatRoom with reveal progression + real-time
+  api/health                deploy smoke check
+  api/matchmake             JSON endpoint exposing the heuristic ranking
+components/
+  ui/*                      Radix-based shadcn primitives (button, dialog, …)
+  atmospheric/*             candle, silhouette, dim-room, ambient-sound
+  onboarding/*              wizard + step screens
+  lounge/*                  dim-table grid
+  chat/*                    chat-room (real-time + reveal logic)
+lib/
+  supabase/{client,server,middleware}.ts
+  matchmaker.ts             heuristic scoring
+  reveal.ts                 reveal-level derivation + projection
+  types.ts                  shared domain types + Database<->TS shape
+supabase/schema.sql         full migration (run once in SQL editor)
+middleware.ts               Supabase session refresh + protected route guard
 ```
 
-## Documentation
+## Ambient sound
 
-For more details on how to get started with the Snag loyalty system, visit the [official Snag documentation](https://docs.snagsolutions.io/welcome)
+The bottom-right toggle synthesises ambient audio in pure Web Audio (no MP3s
+to ship): a slow major-7 piano-bell loop ("Jazz Café") or rolling brown-noise
+("Soft Rain"). Pick a mood, set the volume, and dim the room.
+
+## Caveats
+
+- **Photo privacy** — Supabase RLS is column-blind, so the application layer
+  uses `lib/reveal.ts → project()` to strip `photos`, `hair_color` etc. before
+  sending data to a peer who hasn't yet earned the reveal. **Always go through
+  `project()`** when displaying another user.
+- **Storage policy** — for production, add an RLS policy on the
+  `storage.objects` table so that `locked-photos` are only readable by the
+  uploader and by users with whom they share a `revealed` match.
+- **Email confirmation** — when enabled, the magic link redirects users back
+  to `/onboarding` automatically.
 
 ---
 
-This demo app is built using Next.js and Tailwind CSS, providing a foundation for Web3-based applications utilizing Snag's technology.
-
-
-### Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-### Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Built quietly, by candlelight.

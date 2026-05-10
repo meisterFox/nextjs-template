@@ -1,7 +1,0 @@
-export * from './Home'
-export * from './Leaderboard'
-export * from './Profile'
-export * from './Rules'
-export * from './Minting'
-export * from './Settings'
-export * from './Debug'
