@@ -1,7 +1,9 @@
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { Lock, Sparkles } from 'lucide-react'
+import { Lock, Pencil, Sparkles } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Silhouette } from '@/components/atmospheric/silhouette'
 
 export const dynamic = 'force-dynamic'
@@ -24,7 +26,7 @@ export default async function ProfilePage() {
     <div className="max-w-3xl mx-auto px-6 py-10">
       <div className="flex items-center gap-6">
         <Silhouette level="revealed" size="lg" />
-        <div>
+        <div className="flex-1">
           <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
             Your vibe
           </p>
@@ -33,6 +35,11 @@ export default async function ProfilePage() {
             {profile.display_name} · {profile.age} · {profile.city}
           </p>
         </div>
+        <Button asChild variant="outline">
+          <Link href="/lounge/profile/edit">
+            <Pencil className="h-3.5 w-3.5" /> Edit
+          </Link>
+        </Button>
       </div>
 
       <Section title="Public — what others see right away">

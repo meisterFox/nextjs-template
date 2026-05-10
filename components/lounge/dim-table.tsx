@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Loader2, Flame, MessageCircle, Sparkles } from 'lucide-react'
+import { Loader2, Flame, MessageCircle, Sparkles, RefreshCw, X } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Silhouette } from '@/components/atmospheric/silhouette'
@@ -23,6 +23,19 @@ export function DimTable({ candidates }: { candidates: Candidate[] }) {
   const [active, setActive] = useState<string | null>(null)
   const [loading, setLoading] = useState<string | null>(null)
   const router = useRouter()
+  const search = useSearchParams()
+
+  function skipPerson(id: string) {
+    const current = (search.get('skip') ?? '').split(',').filter(Boolean)
+    if (current.includes(id)) return
+    const next = [...current, id].slice(-50)
+    router.replace(`/lounge?skip=${next.join(',')}`)
+  }
+
+  function reshuffle() {
+    router.replace('/lounge')
+    router.refresh()
+  }
 
   async function approach(c: Candidate) {
     setLoading(c.id)
@@ -55,19 +68,25 @@ export function DimTable({ candidates }: { candidates: Candidate[] }) {
           As more people sit down, silhouettes will appear at the table. Come back in a little
           while.
         </p>
+        <Button variant="outline" className="mt-6" onClick={reshuffle}>
+          <RefreshCw className="h-3.5 w-3.5" /> Look again
+        </Button>
       </div>
     )
   }
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
-      <div className="flex items-end justify-between mb-8">
+      <div className="flex items-end justify-between mb-8 gap-4">
         <div>
           <h1 className="font-serif text-4xl text-gradient-candle">The Lounge</h1>
           <p className="text-sm text-[var(--muted-foreground)] mt-1">
             Twelve silhouettes, ranked by what you have in common — never by what they look like.
           </p>
         </div>
+        <Button variant="outline" size="sm" onClick={reshuffle}>
+          <RefreshCw className="h-3.5 w-3.5" /> Reshuffle
+        </Button>
       </div>
 
       <div className="relative grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -78,10 +97,21 @@ export function DimTable({ candidates }: { candidates: Candidate[] }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05, duration: 0.6, ease: 'easeOut' }}
             onClick={() => setActive(active === c.id ? null : c.id)}
-            className={`group surface-card rounded-2xl p-5 text-left transition-all ${
+            className={`group surface-card rounded-2xl p-5 text-left transition-all relative ${
               active === c.id ? 'glow-candle-soft border-[var(--candle)]/40' : ''
             }`}
           >
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                skipPerson(c.id)
+              }}
+              aria-label="Hide this silhouette"
+              className="absolute top-2 right-2 rounded-full bg-black/40 p-1.5 text-[var(--muted)] hover:text-[var(--foreground)] opacity-0 group-hover:opacity-100 transition"
+            >
+              <X className="h-3 w-3" />
+            </button>
             <div className="flex items-center justify-center pt-2 pb-4">
               <Silhouette level="whisper" size="md" className="animate-drift" />
             </div>

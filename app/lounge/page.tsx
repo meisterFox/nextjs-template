@@ -6,7 +6,18 @@ import type { Profile } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 
-export default async function LoungePage() {
+export default async function LoungePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ skip?: string }>
+}) {
+  const { skip } = await searchParams
+  const skipIds = skip
+    ? skip
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean)
+    : []
   const supabase = await createClient()
   const {
     data: { user },
@@ -21,6 +32,17 @@ export default async function LoungePage() {
 
   if (!self) redirect('/onboarding')
 
+  // Bidirectional block list — both who I blocked and who blocked me are hidden.
+  const { data: blockRows } = await supabase
+    .from('blocks')
+    .select('blocker, blocked')
+    .or(`blocker.eq.${user.id},blocked.eq.${user.id}`)
+
+  const blockedIds = new Set<string>()
+  ;(blockRows ?? []).forEach((b) => {
+    blockedIds.add(b.blocker === user.id ? b.blocked : b.blocker)
+  })
+
   const { data: pool } = await supabase
     .from('profiles')
     .select(
@@ -28,7 +50,7 @@ export default async function LoungePage() {
     )
     .eq('onboarding_complete', true)
     .neq('id', user.id)
-    .limit(48)
+    .limit(96)
 
   // Already-engaged matches (any reveal level) so we can flag who is at the table.
   const { data: existingMatches } = await supabase
@@ -36,15 +58,17 @@ export default async function LoungePage() {
     .select('id, user_a, user_b')
     .or(`user_a.eq.${user.id},user_b.eq.${user.id}`)
 
-  const knownIds = new Set<string>()
   const matchByPeer = new Map<string, string>()
   ;(existingMatches ?? []).forEach((m) => {
     const peer = m.user_a === user.id ? m.user_b : m.user_a
-    knownIds.add(peer)
     matchByPeer.set(peer, m.id)
   })
 
-  const ranked = rankCandidates(self as Profile, (pool ?? []) as Profile[]).slice(0, 12)
+  const skipSet = new Set(skipIds)
+  const filteredPool = ((pool ?? []) as Profile[]).filter(
+    (p) => !blockedIds.has(p.id) && !skipSet.has(p.id),
+  )
+  const ranked = rankCandidates(self as Profile, filteredPool).slice(0, 12)
 
   return (
     <DimTable

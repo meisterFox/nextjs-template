@@ -4,18 +4,14 @@ import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowLeft, ArrowRight, Loader2, Lock } from 'lucide-react'
+import Link from 'next/link'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Candle } from '@/components/atmospheric/candle'
 import { DimRoom } from '@/components/atmospheric/dim-room'
 import { createClient } from '@/lib/supabase/client'
-import {
-  INTEREST_TAGS,
-  PERSONALITY_AXES,
-  VALUE_TAGS,
-  type Profile,
-} from '@/lib/types'
+import { PERSONALITY_AXES, type Profile } from '@/lib/types'
 import { vibeFromInterests } from '@/lib/utils'
 import { StepBasics } from './steps/step-basics'
 import { StepValues } from './steps/step-values'
@@ -26,6 +22,7 @@ import { StepPhotos } from './steps/step-photos'
 
 export interface WizardState {
   display_name: string
+  vibe_title: string
   age: number
   gender: string
   seeking: string
@@ -45,6 +42,7 @@ export interface WizardState {
 
 const baseSchema = z.object({
   display_name: z.string().min(2).max(32),
+  vibe_title: z.string().max(48),
   age: z.number().min(18).max(120),
   gender: z.string().min(1),
   seeking: z.string().min(1),
@@ -74,9 +72,11 @@ const STEP_TITLES = [
 export function OnboardingWizard({
   initial,
   userId,
+  editMode = false,
 }: {
   initial: Profile | null
   userId: string
+  editMode?: boolean
 }) {
   const router = useRouter()
   const [step, setStep] = useState(0)
@@ -85,6 +85,7 @@ export function OnboardingWizard({
 
   const [state, setState] = useState<WizardState>(() => ({
     display_name: initial?.display_name ?? '',
+    vibe_title: initial?.vibe_title ?? '',
     age: initial?.age ?? 28,
     gender: initial?.gender ?? '',
     seeking: initial?.seeking ?? 'any',
@@ -127,7 +128,7 @@ export function OnboardingWizard({
     }
     setSaving(true)
     const supabase = createClient()
-    const vibe = vibeFromInterests(state.interests)
+    const vibe = state.vibe_title.trim() || vibeFromInterests(state.interests)
     const payload = {
       ...state,
       vibe_title: vibe,
@@ -142,7 +143,7 @@ export function OnboardingWizard({
       setError(upErr.message)
       return
     }
-    router.push('/lounge')
+    router.push(editMode ? '/lounge/profile' : '/lounge')
     router.refresh()
   }
 
@@ -180,10 +181,22 @@ export function OnboardingWizard({
     <DimRoom className="flex-1">
       <header className="px-6 py-6 max-w-3xl mx-auto w-full flex items-center gap-3">
         <Candle size="sm" />
-        <span className="font-serif text-xl tracking-wide">Soul-Sync</span>
-        <span className="ml-auto text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
-          Step {step + 1} / {STEP_TITLES.length}
+        <span className="font-serif text-xl tracking-wide">
+          {editMode ? 'Editing your profile' : 'Soul-Sync'}
         </span>
+        {editMode && (
+          <Link
+            href="/lounge/profile"
+            className="ml-auto text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)] hover:text-[var(--candle)]"
+          >
+            Cancel
+          </Link>
+        )}
+        {!editMode && (
+          <span className="ml-auto text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
+            Step {step + 1} / {STEP_TITLES.length}
+          </span>
+        )}
       </header>
 
       <div className="max-w-3xl mx-auto w-full px-6">
@@ -216,7 +229,9 @@ export function OnboardingWizard({
               {step === 2 && (
                 <StepInterests
                   interests={state.interests}
+                  vibeTitle={state.vibe_title}
                   onChange={(v) => update('interests', v)}
+                  onVibeChange={(v) => update('vibe_title', v)}
                 />
               )}
               {step === 3 && (
@@ -245,20 +260,34 @@ export function OnboardingWizard({
           </p>
         )}
 
-        <div className="mt-8 flex items-center justify-between">
+        <div className="mt-8 flex items-center justify-between gap-3">
           <Button variant="ghost" onClick={prev} disabled={step === 0 || saving}>
             <ArrowLeft className="h-4 w-4" /> Back
           </Button>
-          {step < STEP_TITLES.length - 1 ? (
-            <Button onClick={next} disabled={!stepValid}>
-              Continue <ArrowRight className="h-4 w-4" />
-            </Button>
-          ) : (
-            <Button onClick={finish} disabled={!stepValid || saving}>
-              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              {saving ? 'Setting the table…' : 'Enter the lounge'}
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            {editMode && (
+              <Button variant="outline" onClick={finish} disabled={!stepValid || saving}>
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                {saving ? 'Saving…' : 'Save changes'}
+              </Button>
+            )}
+            {step < STEP_TITLES.length - 1 ? (
+              <Button onClick={next} disabled={!stepValid}>
+                Continue <ArrowRight className="h-4 w-4" />
+              </Button>
+            ) : (
+              <Button onClick={finish} disabled={!stepValid || saving}>
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                {saving
+                  ? editMode
+                    ? 'Saving…'
+                    : 'Setting the table…'
+                  : editMode
+                    ? 'Save changes'
+                    : 'Enter the lounge'}
+              </Button>
+            )}
+          </div>
         </div>
       </main>
     </DimRoom>

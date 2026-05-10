@@ -2,6 +2,7 @@ import { redirect, notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { ChatRoom } from '@/components/chat/chat-room'
 import { project, deriveRevealLevel } from '@/lib/reveal'
+import { signedUrls } from '@/lib/storage'
 import type { Match, Profile } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -43,6 +44,15 @@ export default async function ChatPage({
 
   const level = deriveRevealLevel(match as Match)
   const peerView = project(peer as Profile, level)
+
+  // Only resolve signed URLs after mutual reveal — Storage RLS will refuse
+  // earlier anyway, but we belt-and-suspenders it here too.
+  if (level === 'revealed' && peer.photos?.length) {
+    peerView.photos = await signedUrls(supabase, peer.photos as string[])
+  } else {
+    peerView.photos = []
+  }
+
   const myCandle =
     match.user_a === user.id ? match.candle_lit_by_a : match.candle_lit_by_b
   const peerCandle =

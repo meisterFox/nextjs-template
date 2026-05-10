@@ -250,6 +250,99 @@ create policy "messages_insert_participant" on public.messages
     )
   );
 
+-- Allow participants to delete their own match (leaving the table).
+drop policy if exists "matches_delete_participants" on public.matches;
+create policy "matches_delete_participants" on public.matches
+  for delete using (auth.uid() = user_a or auth.uid() = user_b);
+
+-- =========================================================================
+-- blocks — one user can block another. Hides them from the lounge and
+-- prevents future matches.
+-- =========================================================================
+create table if not exists public.blocks (
+  blocker uuid not null references public.profiles(id) on delete cascade,
+  blocked uuid not null references public.profiles(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (blocker, blocked),
+  constraint blocks_distinct check (blocker <> blocked)
+);
+
+create index if not exists blocks_blocked_idx on public.blocks (blocked);
+
+alter table public.blocks enable row level security;
+
+drop policy if exists "blocks_select_self" on public.blocks;
+create policy "blocks_select_self" on public.blocks
+  for select using (auth.uid() = blocker or auth.uid() = blocked);
+
+drop policy if exists "blocks_insert_self" on public.blocks;
+create policy "blocks_insert_self" on public.blocks
+  for insert with check (auth.uid() = blocker);
+
+drop policy if exists "blocks_delete_self" on public.blocks;
+create policy "blocks_delete_self" on public.blocks
+  for delete using (auth.uid() = blocker);
+
+-- =========================================================================
+-- Rate limit on message inserts: max 8 messages in any 10-second window.
+-- =========================================================================
+create or replace function public.enforce_message_rate_limit()
+returns trigger
+language plpgsql
+as $$
+declare
+  recent_count int;
+begin
+  select count(*) into recent_count
+  from public.messages
+  where sender = new.sender
+    and created_at > now() - interval '10 seconds';
+  if recent_count >= 8 then
+    raise exception 'Rate limit: too many messages. Slow down.' using errcode = 'P0001';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists rate_limit_messages on public.messages;
+create trigger rate_limit_messages
+  before insert on public.messages
+  for each row execute function public.enforce_message_rate_limit();
+
+-- =========================================================================
+-- Storage: lock the locked-photos bucket so only revealed match peers can read.
+-- (Run ONLY after creating the bucket: Storage → New bucket → "locked-photos", Private.)
+-- =========================================================================
+do $$ begin
+  if exists (select 1 from storage.buckets where id = 'locked-photos') then
+    -- Owners can do everything to objects under their own user-id folder.
+    drop policy if exists "locked_photos_owner_all" on storage.objects;
+    create policy "locked_photos_owner_all" on storage.objects
+      for all using (
+        bucket_id = 'locked-photos'
+        and split_part(name, '/', 1) = auth.uid()::text
+      ) with check (
+        bucket_id = 'locked-photos'
+        and split_part(name, '/', 1) = auth.uid()::text
+      );
+
+    -- Peers in a fully-revealed match can read the other party's photos.
+    drop policy if exists "locked_photos_revealed_read" on storage.objects;
+    create policy "locked_photos_revealed_read" on storage.objects
+      for select using (
+        bucket_id = 'locked-photos'
+        and exists (
+          select 1 from public.matches m
+          where m.reveal_level = 'revealed'
+            and (
+              (m.user_a = auth.uid() and m.user_b::text = split_part(name, '/', 1))
+              or (m.user_b = auth.uid() and m.user_a::text = split_part(name, '/', 1))
+            )
+        )
+      );
+  end if;
+end $$;
+
 -- =========================================================================
 -- Realtime: enable for messages + matches
 -- =========================================================================
